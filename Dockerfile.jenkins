@@ -1,0 +1,29 @@
+FROM jenkins/jenkins:lts
+
+USER root
+
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip python3-venv && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN ln -s /usr/bin/python3 /usr/bin/python
+RUN mkdir /shared
+
+USER jenkins
+
+ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false -Dhudson.security.csrf.GlobalCrumbIssuerConfiguration.DISABLE_CSRF_PROTECTION=true"
+
+RUN jenkins-plugin-cli --plugins \
+    build-timeout \
+    credentials-binding \
+    timestamper \
+    ws-cleanup \
+    gradle \
+    git
+
+COPY init.groovy.d/ /usr/share/jenkins/ref/init.groovy.d/
+COPY jobs/ /usr/share/jenkins/ref/jobs/
+COPY shared/hunt.py /var/jenkins_home/shared/hunt.py
+
+RUN mkdir -p /var/jenkins_home/shared
