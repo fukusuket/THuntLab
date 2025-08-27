@@ -157,6 +157,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 
-- MISP Project for the threat intelligence platform
-- Jenkins community for the automation server
-- Streamlit team for the data application framework
+- [MISP](https://www.misp-project.org/) Project for the threat intelligence platform
+- [Jenkins](https://www.jenkins.io/) community for the automation server
+- [Streamlit](https://streamlit.io/) team for the data application framework
