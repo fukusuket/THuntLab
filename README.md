@@ -125,11 +125,15 @@ Configure MISP to share threat intelligence data with your hunting scripts and d
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test in the lab environment
-5. Submit a pull request
+Contributions are welcome!
+
+### Steps
+1. Fork this repo
+2. Create a branch: `git checkout -b your-feature`
+3. Make changes and test them
+4. Submit a pull request
+
+Questions? Open an issue!
 
 ## License
 
