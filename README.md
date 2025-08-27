@@ -18,9 +18,8 @@ The platform consists of four main services running in Docker containers:
 1. **Jenkins Server** (Port 8080): Executes automated threat hunting jobs
 2. **Streamlit App** (Port 8081): Provides interactive data analysis interface
 3. **MISP Platform** (Ports 80/443): Manages threat intelligence data
-4. **Supporting Services**: MySQL database and Redis cache for MISP
 
-All services communicate through a shared Docker network and use persistent volumes for data storage.
+![Architecture Diagram](doc/architecture.png)
 
 ## Prerequisites
 
