@@ -1,44 +1,124 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import os
+from datetime import datetime
+
+# Page configuration
+st.set_page_config(page_title="Threat Hunting Dashboard", layout="wide")
 
 # Page title and header
-st.title("Simple Streamlit Sample App")
-st.header("Welcome to this demo application!")
+st.title("🔍 Threat Hunting Dashboard")
+st.header("Cyber Threat Detection & Analysis System")
 
 # Sidebar
-st.sidebar.title("Control Panel")
-name = st.sidebar.text_input("Enter your name:", "Guest")
-age = st.sidebar.slider("Select your age:", 0, 100, 25)
+st.sidebar.title("🛡️ Control Panel")
+analyst = st.sidebar.text_input("Analyst Name:", "Security Analyst")
+date_range = st.sidebar.date_input("Analysis Period:", datetime.now().date())
 
-# Main content
-st.write(f"Hello, {name}! You are {age} years old.")
+# CSV file loading
+csv_path = "/shared/hunt.csv"
 
-# Data display
-st.subheader("Sample Data")
-data = pd.DataFrame({
-    'Name': ['Alice', 'Bob', 'Charlie', 'Diana'],
-    'Age': [25, 30, 35, 28],
-    'Score': [85, 92, 78, 95]
-})
-st.dataframe(data)
+if os.path.exists(csv_path):
+    # Load CSV file
+    threat_data = pd.read_csv(csv_path)
+    threat_data['timestamp'] = pd.to_datetime(threat_data['timestamp'])
 
-# Chart using Streamlit's built-in charting
-st.subheader("Sample Chart")
-chart_data = pd.DataFrame(
-    np.random.randn(20, 3),
-    columns=['A', 'B', 'C']
-)
-st.line_chart(chart_data)
+    # Main dashboard metrics
+    col1, col2, col3, col4 = st.columns(4)
 
-# Interactive widgets
-st.subheader("Interactive Elements")
-if st.button("Click me!"):
-    st.success("Button clicked! 🎉")
+    with col1:
+        total_threats = len(threat_data)
+        st.metric("Total Threats", total_threats)
 
-color = st.selectbox("Choose a color:", ["Red", "Green", "Blue"])
-st.write(f"You selected: {color}")
+    with col2:
+        confirmed_threats = len(threat_data[threat_data['status'] == 'Confirmed'])
+        st.metric("Confirmed Threats", confirmed_threats)
+
+    with col3:
+        critical_threats = len(threat_data[threat_data['severity'] == 'Critical'])
+        st.metric("Critical Threats", critical_threats)
+
+    with col4:
+        investigating = len(threat_data[threat_data['status'] == 'Investigating'])
+        st.metric("Under Investigation", investigating)
+
+    # Data table
+    st.subheader("📊 Threat Detection Data")
+
+    # Filtering options
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        severity_filter = st.selectbox("Severity Filter:",
+                                     ["All"] + threat_data['severity'].unique().tolist())
+    with col2:
+        threat_type_filter = st.selectbox("Threat Type Filter:",
+                                        ["All"] + threat_data['threat_type'].unique().tolist())
+    with col3:
+        status_filter = st.selectbox("Status Filter:",
+                                   ["All"] + threat_data['status'].unique().tolist())
+
+    # Apply filters
+    filtered_data = threat_data.copy()
+    if severity_filter != "All":
+        filtered_data = filtered_data[filtered_data['severity'] == severity_filter]
+    if threat_type_filter != "All":
+        filtered_data = filtered_data[filtered_data['threat_type'] == threat_type_filter]
+    if status_filter != "All":
+        filtered_data = filtered_data[filtered_data['status'] == status_filter]
+
+    # Color coding for severity
+    def highlight_severity(row):
+        if row['severity'] == 'Critical':
+            return ['background-color: #ffebee'] * len(row)
+        elif row['severity'] == 'High':
+            return ['background-color: #fff3e0'] * len(row)
+        elif row['severity'] == 'Medium':
+            return ['background-color: #f3e5f5'] * len(row)
+        else:
+            return [''] * len(row)
+
+    st.dataframe(filtered_data.style.apply(highlight_severity, axis=1), use_container_width=True)
+
+    # Analysis charts
+    st.subheader("📈 Threat Analysis")
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.write("**Threat Type Distribution**")
+        threat_counts = threat_data['threat_type'].value_counts()
+        st.bar_chart(threat_counts)
+
+    with col2:
+        st.write("**Severity Distribution**")
+        severity_counts = threat_data['severity'].value_counts()
+        st.bar_chart(severity_counts)
+
+    # IOC analysis
+    st.subheader("🔍 IOC (Indicators of Compromise) Analysis")
+    ioc_counts = threat_data['ioc_type'].value_counts()
+    st.bar_chart(ioc_counts)
+
+    # Analyst statistics
+    st.subheader("👥 Analyst Statistics")
+    analyst_stats = threat_data.groupby('analyst').agg({
+        'threat_type': 'count',
+        'severity': lambda x: (x == 'Critical').sum()
+    }).rename(columns={'threat_type': 'Total Detections', 'severity': 'Critical Threats'})
+    st.dataframe(analyst_stats)
+
+    # Alerts
+    if critical_threats > 0:
+        st.error(f"⚠️ {critical_threats} critical threats detected!")
+
+    if investigating > 0:
+        st.warning(f"🔍 {investigating} threats under investigation.")
+
+else:
+    st.error(f"CSV file not found: {csv_path}")
+    st.info("Please create shared/hunt.csv with threat hunting data")
 
 # Footer
 st.markdown("---")
-st.markdown("*This is a simple Streamlit application for demonstration purposes.*")
+st.markdown("*🛡️ Cyber Threat Hunting Dashboard - Real-time Security Monitoring*")
