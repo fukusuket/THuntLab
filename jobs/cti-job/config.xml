@@ -1,7 +1,7 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Runs existing hunt.py from shared volume</description>
+  <description>Runs existing cti.py from shared volume</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
@@ -13,7 +13,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-        <command>python3 /shared/hunt.py</command>
+        <command>python3 /shared/cti.py</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers/>

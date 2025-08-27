@@ -8,7 +8,6 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN ln -s /usr/bin/python3 /usr/bin/python
-RUN mkdir /shared
 
 USER jenkins
 
@@ -24,6 +23,3 @@ RUN jenkins-plugin-cli --plugins \
 
 COPY init.groovy.d/ /usr/share/jenkins/ref/init.groovy.d/
 COPY jobs/ /usr/share/jenkins/ref/jobs/
-COPY shared/hunt.py /var/jenkins_home/shared/hunt.py
-
-RUN mkdir -p /var/jenkins_home/shared

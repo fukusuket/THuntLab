@@ -8,6 +8,8 @@ services:
       - "8080:8080"
     volumes:
       - jenkins_home:/var/jenkins_home
+      - ./shared:/shared
+    working_dir: /shared
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
       - JENKINS_OPTS=--httpPort=8080
@@ -23,9 +25,9 @@ services:
     ports:
       - "8081:8081"
     volumes:
-      - ./shared:/app
-    working_dir: /app
-    command: streamlit run /app/app.py --server.port=8081
+      - ./shared:/shared
+    working_dir: /shared
+    command: streamlit run /shared/streamlit.py --server.port=8081
     networks:
       - app-network
 
