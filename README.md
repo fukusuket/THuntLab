@@ -43,7 +43,7 @@ The platform consists of four main services running in Docker containers:
 3. **Access the services:**
    - Jenkins: http://localhost:8080
    - Streamlit Dashboard: http://localhost:8081
-   - MISP Platform: http://localhost (HTTPS: https://localhost)
+   - MISP Platform: https://localhost
       - (email:admin@admin.test / password: admin)
 
 ## Available Commands
