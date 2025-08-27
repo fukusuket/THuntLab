@@ -74,26 +74,6 @@ Use the included Makefile for easy service management:
 - `make streamlit-logs` - Show Streamlit logs
 - `make streamlit-shell` - Access Streamlit container shell
 
-## Service Details
-
-### Jenkins Configuration
-
-- **Authentication**: Disabled for lab environment (not recommended for production)
-- **Pre-configured Job**: "hunt-job" that executes `/shared/hunt.py`
-- **Shared Volume**:  `/shared` mapped to `./shared` on host
-
-### Streamlit Dashboard
-
-- **Libraries**: Pre-installed with pandas, numpy, matplotlib, seaborn, plotly
-- **Sample App**: Includes a demonstration application at `/shared/streamlit.py`
-- **Shared Volume**:  `/shared` mapped to `./shared` on host
-
-### MISP Platform
-
-- **Source**: Uses official MISP Docker configuration as a Git submodule
-- **Database**: MySQL backend with persistent storage
-- **Cache**: Redis for improved performance
-
 ## Shared Directory
 
 The `./shared` directory serves as a common workspace:
