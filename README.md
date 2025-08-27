@@ -15,9 +15,9 @@ THuntLab provides a complete threat hunting workspace with the following compone
 
 The platform consists of four main services running in Docker containers:
 
-1. **Jenkins Server** (Port 8080): Executes automated threat hunting jobs
+1. **Jenkins** (Port 8080): Executes automated threat hunting jobs
 2. **Streamlit App** (Port 8081): Provides interactive data analysis interface
-3. **MISP Platform** (Ports 80/443): Manages threat intelligence data
+3. **MISP** (Ports 80/443): Manages threat intelligence data
 
 ![Architecture Diagram](doc/architecture.png)
 
@@ -26,6 +26,7 @@ The platform consists of four main services running in Docker containers:
 - Docker Engine
 - Docker Compose
 - Git (for submodules)
+- Make
 
 ## Quick Start
 
@@ -79,29 +80,27 @@ Use the included Makefile for easy service management:
 ### Jenkins Configuration
 
 - **Authentication**: Disabled for lab environment (not recommended for production)
-- **Pre-configured Job**: "hunt-job" that executes `/var/jenkins_home/shared/hunt.py`
-- **Plugins**: Includes essential plugins for build automation
-- **Shared Volume**: `/var/jenkins_home/shared` for script execution
+- **Pre-configured Job**: "hunt-job" that executes `/shared/hunt.py`
+- **Shared Volume**:  `/shared` mapped to `./shared` on host
 
 ### Streamlit Dashboard
 
 - **Libraries**: Pre-installed with pandas, numpy, matplotlib, seaborn, plotly
-- **Sample App**: Includes a demonstration application at `/app/app.py`
-- **Working Directory**: `/app` mapped to `./shared` on host
+- **Sample App**: Includes a demonstration application at `/shared/streamlit.py`
+- **Shared Volume**:  `/shared` mapped to `./shared` on host
 
 ### MISP Platform
 
 - **Source**: Uses official MISP Docker configuration as a Git submodule
 - **Database**: MySQL backend with persistent storage
 - **Cache**: Redis for improved performance
-- **Modules**: MISP modules for data enrichment
 
 ## Shared Directory
 
 The `./shared` directory serves as a common workspace:
 
 - `hunt.py`: Example threat hunting script executed by Jenkins
-- `app.py`: Streamlit dashboard application
+- `streamlit.py`: Streamlit dashboard application
 - Additional scripts and data files can be placed here for cross-service access
 
 ## Security Considerations
@@ -124,7 +123,7 @@ For production use, implement proper authentication, authorization, and security
 
 ### Customizing the Dashboard
 
-Modify `./shared/app.py` to create custom visualizations and analytics interfaces for your threat hunting data.
+Modify `./shared/streamlit.py` to create custom visualizations and analytics interfaces for your threat hunting data.
 
 ### MISP Integration
 
