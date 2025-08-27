@@ -1,13 +1,13 @@
 @startuml
 rectangle "SIEM System" as SIEM
 
-rectangle "Host\n(Docker + Shared Volume)" as host {
+rectangle "Host\n(Docker Shared Volume)" as host {
     folder "./shared Volume" as shared
 }
 
 node "Docker Network (bridge)" {
     component Jenkins as jenkins {
-        [Scheduled Job\n(hunt-job)]
+        [Scheduled Job\n(hunt-job/collect-cti-job)]
     }
     component MISP as misp {
         [Threat Intelligence Base]
@@ -17,11 +17,10 @@ node "Docker Network (bridge)" {
     }
 }
 
-SIEM --> jenkins : "Trigger via API"
+SIEM <-- jenkins : "Search via API"
 host -down- shared
 
 jenkins --> misp : "Run hunt-job\nCollect threat intelligence"
-jenkins --> shared : "Write result files"
+jenkins --> shared : "Write hunt-job result files"
 streamlit --> shared : "Read data for visualization"
-
 @enduml
