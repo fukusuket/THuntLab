@@ -37,7 +37,7 @@ The platform consists of four main services running in Docker containers:
 
 2. **Build and start all services:**
    ```bash
-   make dev
+   sudo make dev
    ```
 
 3. **Access the services:**
