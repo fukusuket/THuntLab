@@ -24,73 +24,73 @@ help:
 # Build all services
 .PHONY: build
 build:
-	docker-compose -f $(COMPOSE_FILE) build
+	docker compose -f $(COMPOSE_FILE) build
 
 # Start all services
 .PHONY: up
 up:
-	docker-compose -f $(COMPOSE_FILE) up -d
+	docker compose -f $(COMPOSE_FILE) up -d
 
 # Stop all services
 .PHONY: down
 down:
-	docker-compose -f $(COMPOSE_FILE) down
+	docker compose -f $(COMPOSE_FILE) down
 
 # Restart all services
 .PHONY: restart
 restart:
-	docker-compose -f $(COMPOSE_FILE) restart
+	docker compose -f $(COMPOSE_FILE) restart
 
 # Show logs for all services
 .PHONY: logs
 logs:
-	docker-compose -f $(COMPOSE_FILE) logs -f
+	docker compose -f $(COMPOSE_FILE) logs -f
 
 # Check status
 .PHONY: status
 status:
-	docker-compose -f $(COMPOSE_FILE) ps
+	docker compose -f $(COMPOSE_FILE) ps
 
 # Clean up
 .PHONY: clean
 clean:
-	docker-compose -f $(COMPOSE_FILE) down -v --remove-orphans
+	docker compose -f $(COMPOSE_FILE) down -v --remove-orphans
 
 # Development: build and start all
 .PHONY: dev
 dev:
-	docker-compose -f $(COMPOSE_FILE) up -d --build
+	docker compose -f $(COMPOSE_FILE) up -d --build
 
 # Individual Jenkins commands
 .PHONY: jenkins-build jenkins-up jenkins-down jenkins-logs jenkins-shell
 jenkins-build:
-	docker-compose -f $(COMPOSE_FILE) build jenkins
+	docker compose -f $(COMPOSE_FILE) build jenkins
 
 jenkins-up:
-	docker-compose -f $(COMPOSE_FILE) up -d jenkins
+	docker compose -f $(COMPOSE_FILE) up -d jenkins
 
 jenkins-down:
-	docker-compose -f $(COMPOSE_FILE) stop jenkins
+	docker compose -f $(COMPOSE_FILE) stop jenkins
 
 jenkins-logs:
-	docker-compose -f $(COMPOSE_FILE) logs -f jenkins
+	docker compose -f $(COMPOSE_FILE) logs -f jenkins
 
 jenkins-shell:
-	docker-compose -f $(COMPOSE_FILE) exec jenkins /bin/bash
+	docker compose -f $(COMPOSE_FILE) exec jenkins /bin/bash
 
 # Individual Streamlit commands
 .PHONY: streamlit-build streamlit-up streamlit-down streamlit-logs streamlit-shell
 streamlit-build:
-	docker-compose -f $(COMPOSE_FILE) build streamlit
+	docker compose -f $(COMPOSE_FILE) build streamlit
 
 streamlit-up:
-	docker-compose -f $(COMPOSE_FILE) up -d streamlit
+	docker compose -f $(COMPOSE_FILE) up -d streamlit
 
 streamlit-down:
-	docker-compose -f $(COMPOSE_FILE) stop streamlit
+	docker compose -f $(COMPOSE_FILE) stop streamlit
 
 streamlit-logs:
-	docker-compose -f $(COMPOSE_FILE) logs -f streamlit
+	docker compose -f $(COMPOSE_FILE) logs -f streamlit
 
 streamlit-shell:
-	docker-compose -f $(COMPOSE_FILE) exec streamlit /bin/bash
+	docker compose -f $(COMPOSE_FILE) exec streamlit /bin/bash
