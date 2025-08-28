@@ -46,6 +46,13 @@ The platform consists of four main services running in Docker containers:
    - MISP Platform: https://localhost
       - (email:admin@admin.test / password: admin)
 
+## Screenshots
+After quick start, you can access the following dashboards:
+
+<img src="doc/jenkins.png" width="600" alt="Jenkins Dashboard">
+<img src="doc/streamlit.png" width="600" alt="Streamlit Dashboard">
+<img src="doc/misp.png" width="600" alt="MISP Platform">
+
 ## Available Commands
 
 Use the included Makefile for easy service management:
