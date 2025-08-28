@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 import os
 from datetime import datetime
 
@@ -9,7 +8,6 @@ st.set_page_config(page_title="Threat Hunting Dashboard", layout="wide")
 
 # Page title and header
 st.title("🔍 Threat Hunting Dashboard")
-st.header("Cyber Threat Detection & Analysis System")
 
 # Sidebar
 st.sidebar.title("🛡️ Control Panel")
