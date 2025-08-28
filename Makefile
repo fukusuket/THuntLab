@@ -24,7 +24,7 @@ help:
 # Build all services
 .PHONY: build
 build:
-	docker compose -f $(COMPOSE_FILE) build
+	cp misp-docker/template.env .env && docker compose -f $(COMPOSE_FILE) build
 
 # Start all services
 .PHONY: up
@@ -59,7 +59,7 @@ clean:
 # Development: build and start all
 .PHONY: dev
 dev:
-	docker compose -f $(COMPOSE_FILE) up -d --build
+	cp misp-docker/template.env .env && docker compose -f $(COMPOSE_FILE) up -d --build
 
 # Individual Jenkins commands
 .PHONY: jenkins-build jenkins-up jenkins-down jenkins-logs jenkins-shell
