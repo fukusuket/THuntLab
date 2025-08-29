@@ -27,5 +27,66 @@ services:
     working_dir: /shared
     command: streamlit run /shared/streamlit.py --server.port=8081
 
+  redis:
+    image: valkey/valkey:7.2
+    command: "--requirepass '${REDIS_PASSWORD:-redispassword}'"
+    healthcheck:
+      test: "valkey-cli -a '${REDIS_PASSWORD:-redispassword}' -p ${REDIS_PORT:-6379} ping | grep -q PONG || exit 1"
+      interval: 2s
+      timeout: 1s
+      retries: 3
+      start_period: 5s
+      start_interval: 5s
+
+  db:
+    image: mariadb:10.11
+    restart: always
+    environment:
+      - "MYSQL_USER=${MYSQL_USER:-misp}"
+      - "MYSQL_PASSWORD=${MYSQL_PASSWORD:-example}"
+      - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-password}"
+      - "MYSQL_DATABASE=${MYSQL_DATABASE:-misp}"
+    command: "\
+      --innodb-buffer-pool-size=${INNODB_BUFFER_POOL_SIZE:-2048M} \
+      --innodb-change-buffering=${INNODB_CHANGE_BUFFERING:-none} \
+      --innodb-io-capacity=${INNODB_IO_CAPACITY:-1000} \
+      --innodb-io-capacity-max=${INNODB_IO_CAPACITY_MAX:-2000} \
+      --innodb-log-file-size=${INNODB_LOG_FILE_SIZE:-600M} \
+      --innodb-read-io-threads=${INNODB_READ_IO_THREADS:-16} \
+      --innodb-stats-persistent=${INNODB_STATS_PERSISTENT:-ON} \
+      --innodb-write-io-threads=${INNODB_WRITE_IO_THREADS:-4}"
+    volumes:
+      - mysql_data:/var/lib/mysql:Z
+    cap_add:
+      - SYS_NICE  # CAP_SYS_NICE Prevent runaway mysql log
+    healthcheck:
+      test: mysqladmin --user=$$MYSQL_USER --password=$$MYSQL_PASSWORD status
+      interval: 2s
+      timeout: 1s
+      retries: 3
+      start_period: 30s
+      start_interval: 5s
+
+  misp-core:
+    image: ghcr.io/misp/misp-docker/misp-core:${CORE_RUNNING_TAG:-latest}
+    cap_add:
+      - AUDIT_WRITE
+    depends_on:
+      redis:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: curl -ks ${BASE_URL:-https://localhost}/users/heartbeat > /dev/null || exit 1
+      interval: 2s
+      timeout: 1s
+      retries: 3
+      start_period: 30s
+      start_interval: 30s
+    ports:
+      - "80:80"
+      - "443:443"
+
 volumes:
   jenkins_home:
+  mysql_data:
