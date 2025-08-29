@@ -95,11 +95,9 @@ Configure MISP to share threat intelligence data with your hunting scripts and d
 
 ## Troubleshooting
 
-### Service Not Starting
 - Check container logs: `make logs`
 - Verify port availability (8080, 8081, 80, 443)
 - Ensure Docker daemon is running
-
 
 ## Contributing
 
