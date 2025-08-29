@@ -13,13 +13,5 @@ USER jenkins
 
 ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false -Dhudson.security.csrf.GlobalCrumbIssuerConfiguration.DISABLE_CSRF_PROTECTION=true"
 
-RUN jenkins-plugin-cli --plugins \
-    build-timeout \
-    credentials-binding \
-    timestamper \
-    ws-cleanup \
-    gradle \
-    git
-
 COPY init.groovy.d/ /usr/share/jenkins/ref/init.groovy.d/
 COPY jobs/ /usr/share/jenkins/ref/jobs/
