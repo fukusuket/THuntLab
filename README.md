@@ -2,15 +2,6 @@
 
 A comprehensive threat hunting laboratory environment that integrates Jenkins CI/CD, Streamlit analytics dashboard, and MISP threat intelligence platform using Docker containers.
 
-## Overview
-
-THuntLab provides a complete threat hunting workspace with the following components:
-
-- **Jenkins**: Automation server for running threat hunting scripts and workflows
-- **Streamlit**: Interactive data visualization and analysis dashboard
-- **MISP**: Malware Information Sharing Platform for threat intelligence management
-- **Shared Volume**: Common workspace for scripts and data exchange between services
-
 ## Architecture
 
 The platform consists of four main services running in Docker containers:
