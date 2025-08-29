@@ -14,8 +14,6 @@ services:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
       - JENKINS_OPTS=--httpPort=8080
     restart: unless-stopped
-    networks:
-      - app-network
 
   streamlit:
     build:
@@ -28,48 +26,6 @@ services:
       - ./shared:/shared
     working_dir: /shared
     command: streamlit run /shared/streamlit.py --server.port=8081
-    networks:
-      - app-network
-
-  misp:
-    extends:
-      file: misp-docker/docker-compose.yml
-      service: misp-core
-    ports:
-      - "80:80"
-      - "443:443"
-    depends_on:
-      - db
-      - redis
-      - misp-modules
-    networks:
-      - app-network
-
-  db:
-    extends:
-      file: misp-docker/docker-compose.yml
-      service: db
-    networks:
-      - app-network
-
-  redis:
-    extends:
-      file: misp-docker/docker-compose.yml
-      service: redis
-    networks:
-      - app-network
-
-  misp-modules:
-    extends:
-      file: misp-docker/docker-compose.yml
-      service: misp-modules
-    networks:
-      - app-network
 
 volumes:
   jenkins_home:
-  mysql_data:
-
-networks:
-  app-network:
-    driver: bridge
