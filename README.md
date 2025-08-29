@@ -1,4 +1,4 @@
-# THuntLab
+# 🛡️THuntLab
 
 A comprehensive threat hunting laboratory environment that integrates Jenkins CI/CD, Streamlit analytics dashboard, and MISP threat intelligence platform using Docker containers.
 
