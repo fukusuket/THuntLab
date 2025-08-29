@@ -2,25 +2,30 @@
 rectangle "SIEM System" as SIEM
 
 rectangle "Host\n(Docker Shared Volume)" as host {
-    folder "./shared Volume" as shared
+    folder "./shared\nhunt.py\nhunt.csv\ncti.py\nstreamlit.py" as shared
 }
 
 node "Docker Network (bridge)" {
     component Jenkins as jenkins {
         [Scheduled Job\n(hunt-job/collect-cti-job)]
     }
-    component MISP as misp {
-        [Threat Intelligence Base]
+    component Jupyter as jupyter {
+        [Develop and Test\nHunt Scripts]
     }
     component Streamlit as streamlit {
         [Data Visualization]
     }
+    component MISP as misp {
+        [Threat Intelligence Base]
+    }
 }
 
-SIEM <-- jenkins : "Search via API"
+SIEM <-- jenkins : "Search via API and export results"
+SIEM <-- jupyter : ""
 host -down- shared
 
-jenkins --> misp : "Run hunt-job\nCollect threat intelligence"
-jenkins --> shared : "Write hunt-job result files"
-streamlit --> shared : "Read data for visualization"
+jenkins --> misp : "Run hunt-job\ncti-job"
+jenkins --> shared : "Write job result files"
+jupyter --> shared : "R/W data for\ndeveloping hunt scripts"
+streamlit --> shared : "Read data for dashboard"
 @enduml
