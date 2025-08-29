@@ -9,10 +9,6 @@ st.set_page_config(page_title="Threat Hunting Dashboard", layout="wide")
 # Page title and header
 st.title("🔍 Threat Hunting Dashboard")
 
-# Sidebar
-st.sidebar.title("🛡️ Control Panel")
-analyst = st.sidebar.text_input("Analyst Name:", "Security Analyst")
-date_range = st.sidebar.date_input("Analysis Period:", datetime.now().date())
 
 # CSV file loading
 csv_path = "/shared/hunt.csv"
