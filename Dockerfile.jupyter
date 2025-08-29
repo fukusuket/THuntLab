@@ -1,0 +1,55 @@
+FROM python:3.13-slim
+
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y \
+        build-essential \
+        curl \
+        git \
+        && rm -rf /var/lib/apt/lists/*
+
+# Install Jupyter and msticpy with dependencies
+RUN pip install --no-cache-dir \
+    jupyter \
+    jupyterlab \
+    msticpy \
+    pandas \
+    numpy \
+    matplotlib \
+    seaborn \
+    plotly \
+    requests \
+    ipywidgets
+
+# Create jupyter user
+RUN useradd -m -s /bin/bash jupyter
+
+# Set working directory
+WORKDIR /shared
+
+# Create Jupyter config directory
+RUN mkdir -p /home/jupyter/.jupyter
+
+# Configure Jupyter to run without password and allow root
+RUN jupyter notebook --generate-config --allow-root && \
+    echo "c.NotebookApp.token = ''" >> /home/jupyter/.jupyter/jupyter_notebook_config.py && \
+    echo "c.NotebookApp.password = ''" >> /home/jupyter/.jupyter/jupyter_notebook_config.py && \
+    echo "c.NotebookApp.open_browser = False" >> /home/jupyter/.jupyter/jupyter_notebook_config.py && \
+    echo "c.NotebookApp.ip = '0.0.0.0'" >> /home/jupyter/.jupyter/jupyter_notebook_config.py && \
+    echo "c.NotebookApp.port = 8888" >> /home/jupyter/.jupyter/jupyter_notebook_config.py && \
+    echo "c.NotebookApp.allow_root = True" >> /home/jupyter/.jupyter/jupyter_notebook_config.py && \
+    echo "c.NotebookApp.notebook_dir = '/shared'" >> /home/jupyter/.jupyter/jupyter_notebook_config.py && \
+    echo "c.ServerApp.root_dir = '/shared'" >> /home/jupyter/.jupyter/jupyter_notebook_config.py && \
+    echo "c.ServerApp.notebook_dir = '/shared'" >> /home/jupyter/.jupyter/jupyter_notebook_config.py
+
+# Set permissions
+RUN chown -R jupyter:jupyter /home/jupyter/.jupyter
+
+# Expose port
+EXPOSE 8082
+
+# Switch to jupyter user
+USER jupyter
+
+# Start Jupyter Lab
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8082", "--no-browser", "--allow-root", "--NotebookApp.token=''", "--NotebookApp.password=''", "--notebook-dir=/shared"]

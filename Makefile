@@ -20,6 +20,9 @@ help:
 	@echo "  streamlit-build  - Build only Streamlit"
 	@echo "  streamlit-up     - Start only Streamlit"
 	@echo "  streamlit-logs   - Show Streamlit logs"
+	@echo "  jupyter-build    - Build only Jupyter"
+	@echo "  jupyter-up       - Start only Jupyter"
+	@echo "  jupyter-logs     - Show Jupyter logs"
 
 # Build all services
 .PHONY: build
@@ -94,3 +97,19 @@ streamlit-logs:
 
 streamlit-shell:
 	docker compose -f $(COMPOSE_FILE) exec streamlit /bin/bash
+
+.PHONY: jupyter-build jupyter-up jupyter-down jupyter-logs jupyter-shell
+jupyter-build:
+	docker compose -f $(COMPOSE_FILE) build jupyter
+
+jupyter-up:
+	docker compose -f $(COMPOSE_FILE) up -d jupyter
+
+jupyter-down:
+	docker compose -f $(COMPOSE_FILE) stop jupyter
+
+jupyter-logs:
+	docker compose -f $(COMPOSE_FILE) logs -f jupyter
+
+jupyter-shell:
+	docker compose -f $(COMPOSE_FILE) exec jupyter /bin/bash

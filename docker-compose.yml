@@ -14,6 +14,8 @@ services:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
       - JENKINS_OPTS=--httpPort=8080
     restart: unless-stopped
+    networks:
+      - app-network
 
   streamlit:
     build:
@@ -26,6 +28,22 @@ services:
       - ./shared:/shared
     working_dir: /shared
     command: streamlit run /shared/streamlit.py --server.port=8081
+    networks:
+      - app-network
+
+  jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile.jupyter
+    container_name: jupyter-notebook
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./shared:/shared
+    working_dir: /shared
+    restart: unless-stopped
+    networks:
+      - app-network
 
   redis:
     image: valkey/valkey:7.2
@@ -37,6 +55,8 @@ services:
       retries: 3
       start_period: 5s
       start_interval: 5s
+    networks:
+      - app-network
 
   db:
     image: mariadb:10.11
@@ -66,6 +86,8 @@ services:
       retries: 3
       start_period: 30s
       start_interval: 5s
+    networks:
+      - app-network
 
   misp-core:
     image: ghcr.io/misp/misp-docker/misp-core:${CORE_RUNNING_TAG:-latest}
@@ -86,7 +108,13 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    networks:
+      - app-network
 
 volumes:
   jenkins_home:
   mysql_data:
+
+networks:
+  app-network:
+    driver: bridge

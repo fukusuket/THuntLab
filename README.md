@@ -1,6 +1,6 @@
 # 🛡️THuntLab
 
-A comprehensive threat hunting laboratory environment that integrates Jenkins CI/CD, Streamlit analytics dashboard, and MISP threat intelligence platform using Docker containers.
+A comprehensive threat hunting laboratory environment that integrates Jenkins CI/CD, Streamlit analytics dashboard, Jupyter Notebook for data exploration, and MISP threat intelligence platform using Docker containers.
 
 ## Architecture
 
@@ -8,7 +8,8 @@ The platform consists of four main services running in Docker containers:
 
 1. **Jenkins** (Port 8080): Executes automated threat hunting jobs
 2. **Streamlit App** (Port 8081): Provides interactive data analysis interface
-3. **MISP** (Ports 80/443): Manages threat intelligence data
+3. **Jupyter Notebook** (Port 8082): For exploratory data analysis and scripting
+4. **MISP** (Ports 80/443): Manages threat intelligence data
 
 ![Architecture Diagram](doc/architecture.png)
 
@@ -34,6 +35,7 @@ The platform consists of four main services running in Docker containers:
 3. **Access the services:**
    - Jenkins: http://localhost:8080
    - Streamlit Dashboard: http://localhost:8081
+   - Jupyter Notebook: http://localhost:8082
    - MISP Platform: https://localhost
       - (email: admin@admin.test / password: admin)
 
@@ -42,6 +44,7 @@ After quick start, you can access the following dashboards:
 
 <img src="doc/jenkins.png" width="600" alt="Jenkins Dashboard">
 <img src="doc/streamlit.png" width="600" alt="Streamlit Dashboard">
+<img src="doc/jupyter.png" width="600" alt="Jupyter Notebook">
 <img src="doc/misp.png" width="600" alt="MISP Platform">
 
 ## Available Commands
@@ -65,6 +68,7 @@ The `./shared` directory serves as a common workspace:
 - `hunt.py`: Example threat hunting script executed by Jenkins
 - `cti.py`: Example script for MISP interaction
 - `streamlit.py`: Streamlit dashboard application
+- `notebook.ipynb`: Jupyter Notebook for data exploration
 - Additional scripts and data files can be placed here for cross-service access
 
 ## Security Considerations
@@ -96,7 +100,7 @@ Configure MISP to share threat intelligence data with your hunting scripts and d
 ## Troubleshooting
 
 - Check container logs: `make logs`
-- Verify port availability (8080, 8081, 80, 443)
+- Verify port availability (8080, 8081, 8082, 80, 443)
 - Ensure Docker daemon is running
 
 ## Contributing
