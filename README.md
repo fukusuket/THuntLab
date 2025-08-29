@@ -31,7 +31,7 @@ The platform consists of four main services running in Docker containers:
 
 1. **Clone the repository with submodules:**
    ```bash
-   git clone --recurse-submodules https://github.com/fukusuket/THuntLab.git
+   git clone https://github.com/fukusuket/THuntLab.git
    cd THuntLab
    ```
 
