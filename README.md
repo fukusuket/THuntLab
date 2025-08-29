@@ -67,20 +67,6 @@ Use the included Makefile for easy service management:
 - `make clean` - Remove all services and volumes
 - `make dev` - Build and start all services
 
-### Individual Service Commands
-
-**Jenkins:**
-- `make jenkins-build` - Build only Jenkins
-- `make jenkins-up` - Start only Jenkins
-- `make jenkins-logs` - Show Jenkins logs
-- `make jenkins-shell` - Access Jenkins container shell
-
-**Streamlit:**
-- `make streamlit-build` - Build only Streamlit
-- `make streamlit-up` - Start only Streamlit
-- `make streamlit-logs` - Show Streamlit logs
-- `make streamlit-shell` - Access Streamlit container shell
-
 ## Shared Directory
 
 The `./shared` directory serves as a common workspace:
@@ -123,12 +109,6 @@ Configure MISP to share threat intelligence data with your hunting scripts and d
 - Verify port availability (8080, 8081, 80, 443)
 - Ensure Docker daemon is running
 
-### Volume Mount Issues
-- Verify shared directory permissions
-- Check Docker volume configuration
-
-### MISP Submodule Problems
-- Ensure submodules are properly initialized: `git submodule update --init --recursive`
 
 ## Contributing
 
