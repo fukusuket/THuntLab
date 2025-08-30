@@ -19,7 +19,9 @@ RUN pip install --no-cache-dir \
     seaborn \
     plotly \
     requests \
-    ipywidgets
+    ipywidgets \
+    pymisp \
+    pymispwarninglists
 
 # Create jupyter user
 RUN useradd -m -s /bin/bash jupyter
