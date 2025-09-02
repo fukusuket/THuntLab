@@ -1,3 +1,4 @@
 [submodule "shared/threatfeed-collector"]
 	path = shared/threatfeed-collector
 	url = https://github.com/fukusuket/ThreatfeedCollector.git
+	branch = main
