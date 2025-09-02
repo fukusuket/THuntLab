@@ -97,6 +97,9 @@ Modify `./shared/streamlit.py` to create custom visualizations and analytics int
 
 Configure MISP to share threat intelligence data with your hunting scripts and dashboard through the shared volume or API connections.
 
+## Related Projects
+- [ThreatfeedCollector](https://github.com/fukusuket/ThreatfeedCollector)
+
 ## Troubleshooting
 
 - Check container logs: `make logs`
