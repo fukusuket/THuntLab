@@ -76,38 +76,12 @@ if os.path.exists(csv_path):
 
     # Analysis charts
     st.subheader("📈 Threat Analysis")
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        st.write("**Threat Type Distribution**")
-        threat_counts = threat_data['threat_type'].value_counts()
-        st.bar_chart(threat_counts)
-
-    with col2:
-        st.write("**Severity Distribution**")
-        severity_counts = threat_data['severity'].value_counts()
-        st.bar_chart(severity_counts)
+    # Write analysis code here
 
     # IOC analysis
     st.subheader("🔍 IOC (Indicators of Compromise) Analysis")
     ioc_counts = threat_data['ioc_type'].value_counts()
     st.bar_chart(ioc_counts)
-
-    # Analyst statistics
-    st.subheader("👥 Analyst Statistics")
-    analyst_stats = threat_data.groupby('analyst').agg({
-        'threat_type': 'count',
-        'severity': lambda x: (x == 'Critical').sum()
-    }).rename(columns={'threat_type': 'Total Detections', 'severity': 'Critical Threats'})
-    st.dataframe(analyst_stats)
-
-    # Alerts
-    if critical_threats > 0:
-        st.error(f"⚠️ {critical_threats} critical threats detected!")
-
-    if investigating > 0:
-        st.warning(f"🔍 {investigating} threats under investigation.")
 
 else:
     st.error(f"CSV file not found: {csv_path}")
