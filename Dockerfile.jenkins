@@ -9,9 +9,14 @@ RUN apt-get update && \
 
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
+COPY shared/threatfeed-collector/requirements.txt /tmp/threatfeed-requirements.txt
+RUN pip3 install -r /tmp/threatfeed-requirements.txt --break-system-packages
+
 USER jenkins
 
 ENV JAVA_OPTS="-Djenkins.install.runSetupWizard=false -Dhudson.security.csrf.GlobalCrumbIssuerConfiguration.DISABLE_CSRF_PROTECTION=true"
 
 COPY init.groovy.d/ /usr/share/jenkins/ref/init.groovy.d/
 COPY jobs/ /usr/share/jenkins/ref/jobs/
+
+COPY shared/threatfeed-collector/ /shared/threatfeed-collector/
