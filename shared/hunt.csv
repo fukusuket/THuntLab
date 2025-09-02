@@ -1,9 +1,9 @@
-timestamp,threat_type,source_ip,destination_ip,severity,status,analyst,ioc_type,details
-2024-01-15 09:30:00,Malware,192.168.1.100,203.0.113.45,High,Confirmed,Alice,Hash,Suspicious file hash detected
-2024-01-15 10:15:00,Phishing,10.0.0.50,198.51.100.23,Medium,Investigating,Bob,URL,Suspicious domain access
-2024-01-15 11:20:00,APT,172.16.0.25,203.0.113.78,Critical,Confirmed,Charlie,IP,Known APT group infrastructure
-2024-01-15 14:45:00,Ransomware,192.168.1.75,198.51.100.67,High,False Positive,Diana,Behavior,Encrypted file activity
-2024-01-15 16:30:00,Data Exfiltration,10.0.0.30,203.0.113.12,High,Confirmed,Alice,Network,Large data transfer detected
-2024-01-16 08:15:00,Malware,192.168.1.120,198.51.100.45,Medium,Investigating,Bob,Hash,Suspicious executable
-2024-01-16 12:00:00,Lateral Movement,172.16.0.45,172.16.0.67,Medium,Confirmed,Charlie,Behavior,Unusual network activity
-2024-01-16 15:30:00,Command & Control,10.0.0.80,203.0.113.90,Critical,Confirmed,Diana,Domain,C2 communication detected
+timestamp,threat_type,source_ip,destination_ip,severity,status,ioc_type,details
+2024-01-15 09:30:00,Malware,192.168.1.100,203.0.113.45,High,Confirmed,Hash,Suspicious file hash detected
+2024-01-15 10:15:00,Phishing,10.0.0.50,198.51.100.23,Medium,Investigating,URL,Suspicious domain access
+2024-01-15 11:20:00,APT,172.16.0.25,203.0.113.78,Critical,Confirmed,IP,Known APT group infrastructure
+2024-01-15 14:45:00,Ransomware,192.168.1.75,198.51.100.67,High,False Positive,Behavior,Encrypted file activity
+2024-01-15 16:30:00,Data Exfiltration,10.0.0.30,203.0.113.12,High,Confirmed,Network,Large data transfer detected
+2024-01-16 08:15:00,Malware,192.168.1.120,198.51.100.45,Medium,Investigating,Hash,Suspicious executable
+2024-01-16 12:00:00,Lateral Movement,172.16.0.45,172.16.0.67,Medium,Confirmed,Behavior,Unusual network activity
+2024-01-16 15:30:00,Command & Control,10.0.0.80,203.0.113.90,Critical,Confirmed,Domain,C2 communication detected
