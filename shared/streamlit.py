@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
-from datetime import datetime
+import glob
 
 # Page configuration
 st.set_page_config(page_title="Threat Hunting Dashboard", layout="wide")
@@ -80,12 +80,23 @@ if os.path.exists(csv_path):
 
     # IOC analysis
     st.subheader("🔍 IOC (Indicators of Compromise) Analysis")
-    ioc_counts = threat_data['ioc_type'].value_counts()
-    st.bar_chart(ioc_counts)
+    ioc_files = glob.glob("/shared/ioc_stats_*.csv", recursive=True)
+    if ioc_files:
+        all_data = []
+        for file_path in ioc_files:
+            try:
+                df = pd.read_csv(file_path)
+                df['source_file'] = os.path.basename(file_path)
+                all_data.append(df)
+            except Exception as e:
+                st.warning(f"Faied to read: {file_path} - {str(e)}")
 
-else:
-    st.error(f"CSV file not found: {csv_path}")
-    st.info("Please create shared/hunt.csv with threat hunting data")
+        if all_data:
+            combined_df = pd.concat(all_data, ignore_index=True)
+            # 日付列を datetime に変換
+    else:
+        st.error(f"ioc_stats_*.csv file not found: {csv_path}")
+        st.info("Please create shared/hunt.csv with threat hunting data")
 
 # Footer
 st.markdown("---")
