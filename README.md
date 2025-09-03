@@ -71,6 +71,10 @@ The `./shared` directory serves as a common workspace:
 - `notebook.ipynb`: Jupyter Notebook for data exploration
 - Additional scripts and data files can be placed here for cross-service access
 
+## Related Projects
+- [ThreatfeedCollector](https://github.com/fukusuket/ThreatfeedCollector)
+  - Threat research feeds, filters noise, creates MISP events, and generates CSV statistics.
+
 ## Security Considerations
 
 **Warning**: This configuration is designed for laboratory and educational purposes. It includes several security settings that are NOT suitable for production environments:
@@ -96,10 +100,6 @@ Modify `./shared/streamlit.py` to create custom visualizations and analytics int
 ### MISP Integration
 
 Configure MISP to share threat intelligence data with your hunting scripts and dashboard through the shared volume or API connections.
-
-## Related Projects
-- [ThreatfeedCollector](https://github.com/fukusuket/ThreatfeedCollector)
-  - Threat research feeds, filters noise, creates MISP events, and generates CSV statistics.
 
 ## Troubleshooting
 
