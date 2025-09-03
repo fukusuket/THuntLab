@@ -60,39 +60,27 @@ if os.path.exists(csv_path):
         filtered_data = filtered_data[filtered_data['threat_type'] == threat_type_filter]
     if status_filter != "All":
         filtered_data = filtered_data[filtered_data['status'] == status_filter]
+    st.dataframe(filtered_data, use_container_width=True)
 
-    # Color coding for severity
-    def highlight_severity(row):
-        if row['severity'] == 'Critical':
-            return ['background-color: #ffebee'] * len(row)
-        elif row['severity'] == 'High':
-            return ['background-color: #fff3e0'] * len(row)
-        elif row['severity'] == 'Medium':
-            return ['background-color: #f3e5f5'] * len(row)
-        else:
-            return [''] * len(row)
+# IOC analysis
+st.subheader("🔍 IOC (Indicators of Compromise) Stats")
+ioc_files = glob.glob("/shared/ioc_stats_*.csv", recursive=True)
+if ioc_files:
+    all_data = []
+    for file_path in ioc_files:
+        try:
+            df = pd.read_csv(file_path)
+            all_data.append(df)
+        except Exception as e:
+            st.warning(f"Faied to read: {file_path} - {str(e)}")
 
-    st.dataframe(filtered_data.style.apply(highlight_severity, axis=1), use_container_width=True)
-
-    # IOC analysis
-    st.subheader("🔍 IOC (Indicators of Compromise) Stats")
-    ioc_files = glob.glob("/shared/ioc_stats_*.csv", recursive=True)
-    if ioc_files:
-        all_data = []
-        for file_path in ioc_files:
-            try:
-                df = pd.read_csv(file_path)
-                all_data.append(df)
-            except Exception as e:
-                st.warning(f"Faied to read: {file_path} - {str(e)}")
-
-        if all_data:
-            combined_df = pd.concat(all_data, ignore_index=True)
-            combined_df['date'] = pd.to_datetime(combined_df['date'])
-            st.dataframe(combined_df, use_container_width=True)
-    else:
-        st.error(f"ioc_stats_*.csv file not found: {csv_path}")
-        st.info("Please create /shared/ioc_stats_*.csv with cti.py")
+    if all_data:
+        combined_df = pd.concat(all_data, ignore_index=True)
+        combined_df['date'] = pd.to_datetime(combined_df['date'])
+        st.dataframe(combined_df, use_container_width=True)
+else:
+    st.error(f"ioc_stats_*.csv file not found: {csv_path}")
+    st.info("Please create /shared/ioc_stats_*.csv with cti.py")
 
 # Footer
 st.markdown("---")
