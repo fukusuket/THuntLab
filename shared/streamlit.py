@@ -74,29 +74,25 @@ if os.path.exists(csv_path):
 
     st.dataframe(filtered_data.style.apply(highlight_severity, axis=1), use_container_width=True)
 
-    # Analysis charts
-    st.subheader("📈 Threat Analysis")
-    # Write analysis code here
-
     # IOC analysis
-    st.subheader("🔍 IOC (Indicators of Compromise) Analysis")
+    st.subheader("🔍 IOC (Indicators of Compromise) Stats")
     ioc_files = glob.glob("/shared/ioc_stats_*.csv", recursive=True)
     if ioc_files:
         all_data = []
         for file_path in ioc_files:
             try:
                 df = pd.read_csv(file_path)
-                df['source_file'] = os.path.basename(file_path)
                 all_data.append(df)
             except Exception as e:
                 st.warning(f"Faied to read: {file_path} - {str(e)}")
 
         if all_data:
             combined_df = pd.concat(all_data, ignore_index=True)
-            # 日付列を datetime に変換
+            combined_df['date'] = pd.to_datetime(combined_df['date'])
+            st.dataframe(combined_df, use_container_width=True)
     else:
         st.error(f"ioc_stats_*.csv file not found: {csv_path}")
-        st.info("Please create shared/hunt.csv with threat hunting data")
+        st.info("Please create /shared/ioc_stats_*.csv with cti.py")
 
 # Footer
 st.markdown("---")
