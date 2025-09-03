@@ -99,6 +99,7 @@ Configure MISP to share threat intelligence data with your hunting scripts and d
 
 ## Related Projects
 - [ThreatfeedCollector](https://github.com/fukusuket/ThreatfeedCollector)
+  - Threat research feeds, filters noise, creates MISP events, and generates CSV statistics.
 
 ## Troubleshooting
 
