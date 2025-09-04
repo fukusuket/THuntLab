@@ -21,7 +21,8 @@
 export MISP_URL=https://misp-core
 export MISP_KEY=
 export DAYS_BACK=1
-python3 /shared/threatfeed-collector/cti.py</command>
+python3 /shared/threatfeed-collector/cti.py
+cp *.csv /shared/</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
