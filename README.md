@@ -19,6 +19,10 @@ The platform consists of four main services running in Docker containers:
 - Git (for submodules)
 - Make
 
+## Requirements
+- Minimum 4GB RAM
+- Minimum 15GB free disk space
+
 ## Quick Start
 
 1. **Clone the repository with submodules:**
@@ -84,6 +88,10 @@ The `./shared` directory serves as a common workspace:
 - Anonymous users have full administrative access
 
 For production use, implement proper authentication, authorization, and security controls.
+
+## Tested Environments
+- macOS M3
+- Windows11 (WSL2 with Ubuntu 22.04)
 
 ## Development
 
