@@ -62,7 +62,9 @@ clean:
 # Development: build and start all
 .PHONY: dev
 dev:
-	docker compose -f $(COMPOSE_FILE) up -d --build
+	docker compose -f $(COMPOSE_FILE) up -d --build --wait
+	docker compose exec -T db sh -lc 'mysql -u misp -pexample -h 127.0.0.1 misp -N -s -e "select authkey from users where email = \"admin@admin.test\";" > /tmp/authkey.txt'
+	docker compose cp db:/tmp/authkey.txt ./shared/authkey.txt
 
 # Individual Jenkins commands
 .PHONY: jenkins-build jenkins-up jenkins-down jenkins-logs jenkins-shell

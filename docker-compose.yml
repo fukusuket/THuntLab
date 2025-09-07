@@ -76,7 +76,7 @@ services:
       --innodb-stats-persistent=${INNODB_STATS_PERSISTENT:-ON} \
       --innodb-write-io-threads=${INNODB_WRITE_IO_THREADS:-4}"
     volumes:
-      - mysql_data:/var/lib/mysql:Z
+      - mysql_data:/var/lib/mysql
     cap_add:
       - SYS_NICE  # CAP_SYS_NICE Prevent runaway mysql log
     healthcheck:
