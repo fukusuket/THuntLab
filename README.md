@@ -91,7 +91,7 @@ For production use, implement proper authentication, authorization, and security
 
 ## Tested Environments
 - macOS M3
-- Windows11 (WSL2 with Ubuntu 22.04)
+- Windows11 (WSL2 with Ubuntu 24.04.02 LTS)
 
 ## Development
 
