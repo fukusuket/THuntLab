@@ -102,7 +102,7 @@ services:
       test: curl -ks ${BASE_URL:-https://localhost}/users/heartbeat > /dev/null || exit 1
       interval: 2s
       timeout: 1s
-      retries: 3
+      retries: 10
       start_period: 30s
       start_interval: 30s
     ports:
