@@ -7,22 +7,31 @@ from datetime import datetime, timedelta
 # Page configuration
 st.set_page_config(page_title="Threat Hunting Dashboard", layout="wide")
 st.title("🛡️ Threat Hunting Dashboard")
-# Create tabs
+
+end_date_default = datetime.now().date()
+start_date_default = end_date_default - timedelta(days=7)
+date_range = st.date_input(
+    "Select date range",
+    (start_date_default, end_date_default),
+    key="hunt_date_range",
+)
+
+if isinstance(date_range, tuple) and len(date_range) == 2:
+    start_date, end_date = date_range
+else:
+    start_date, end_date = start_date_default, end_date_default
+
 tab1, tab2 = st.tabs(["🔍 IOC Hunting", "📊 Threat Detection Data"])
 
 with tab1:
-    # IOC analysis in Dashboard Overview tab
-    end_date = datetime.now().date()
-    start_date = end_date - timedelta(days=7)
-
-    st.subheader(f"🔍 IOC Hunting result ({start_date} - {end_date})")
+    st.subheader(f"🔍 IOC Hunting results ")
     ibh_files = glob.glob("/shared/ibh_hunt_*.csv", recursive=True)
     if ibh_files:
         pass
     else:
         st.info("Please create /shared/ibh_hunt_*.csv with hunt.py")
 
-    st.subheader(f"🔍 Collected IOCs ({start_date} - {end_date})")
+    st.subheader(f"🔍 Collected IOCs ")
     ioc_files = glob.glob("/shared/ioc_stats_*.csv", recursive=True)
     if ioc_files:
         all_data = []
