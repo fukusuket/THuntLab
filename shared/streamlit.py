@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 
 # Page configuration
 st.set_page_config(page_title="Threat Hunting Dashboard", layout="wide")
-st.title("🛡️ Threat Hunting Dashboard")
+st.title("🛡️Threat Hunting Dashboard")
 
 end_date_default = datetime.now().date()
 start_date_default = end_date_default - timedelta(days=7)
@@ -25,11 +25,22 @@ tab1, tab2 = st.tabs(["🔍 IOC Hunting", "📊 Threat Detection Data"])
 
 with tab1:
     st.subheader(f"🔍 IOC Hunting results ")
-    ibh_files = glob.glob("/shared/ibh_hunt_*.csv", recursive=True)
-    if ibh_files:
-        pass
-    else:
-        st.info("Please create /shared/ibh_hunt_*.csv with hunt.py")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.markdown("Found IOCs in Environment")
+        hunt_files = glob.glob("/shared/ibh_hunt_*.csv", recursive=True)
+        if hunt_files:
+            pass
+        else:
+            st.info("Please create /shared/ibh_hunt_*.csv with hunt.py")
+
+    with col2:
+        st.markdown("Executed Search Queries")
+        query_files = glob.glob("/shared/ibh_query_*.csv", recursive=True)
+        if query_files:
+            pass
+        else:
+            st.info("Please create /shared/ibh_query_*.csv with hunt.py")
 
     st.subheader(f"🔍 Collected IOCs ")
     ioc_files = glob.glob("/shared/ioc_stats_*.csv", recursive=True)
