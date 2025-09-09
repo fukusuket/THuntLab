@@ -22,43 +22,37 @@ else:
     start_date, end_date = start_date_default, end_date_default
 
 tab1, tab2 = st.tabs(["🔍 IOC Hunting", "📊 Threat Detection Data"])
+all_data = []
+hunt_files = glob.glob("/shared/ibh_query_*.csv", recursive=True)
+if hunt_files:
+    for file_path in hunt_files:
+        try:
+            df = pd.read_csv(file_path)
+            all_data.append(df)
+        except Exception as e:
+            st.warning(f"Failed to read: {file_path} - {str(e)}")
+combined_df = pd.concat(all_data, ignore_index=True)
 
 with tab1:
     st.subheader(f"🔍 IOC Hunting results ")
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("Found IOCs in Environment")
-        hunt_files = glob.glob("/shared/ibh_hunt_*.csv", recursive=True)
         if hunt_files:
-            all_data = []
-            for file_path in hunt_files:
-                try:
-                    df = pd.read_csv(file_path)
-                    all_data.append(df)
-                except Exception as e:
-                    st.warning(f"Failed to read: {file_path} - {str(e)}")
-            combined_df = pd.concat(all_data, ignore_index=True)
-            combined_df = combined_df[combined_df['Count'] > 0]
-            if combined_df.empty:
+            filtered_df = combined_df[combined_df['Count'] > 0]
+            if filtered_df.empty:
                 st.info("No IoCs were detected during the specified search period.")
             else:
                 st.error('IoCs were detected during the specified search period.', icon="🚨")
-                st.dataframe(combined_df, use_container_width=True, hide_index=True)
+                cols = [c for c in ['Value', 'Count'] if c in filtered_df.columns]
+                filtered_df = filtered_df.loc[:, cols]
+                st.dataframe(filtered_df, use_container_width=True, hide_index=True)
         else:
             st.info("Please create /shared/ibh_hunt_*.csv with hunt.py")
 
     with col2:
         st.markdown("Executed Search Queries")
-        query_files = glob.glob("/shared/ibh_query_*.csv", recursive=True)
-        if query_files:
-            all_data = []
-            for file_path in query_files:
-                try:
-                    df = pd.read_csv(file_path)
-                    all_data.append(df)
-                except Exception as e:
-                    st.warning(f"Failed to read: {file_path} - {str(e)}")
-            combined_df = pd.concat(all_data, ignore_index=True)
+        if hunt_files:
             st.dataframe(combined_df, use_container_width=True, hide_index=True, height=200)
         else:
             st.info("Please create /shared/ibh_query_*.csv with hunt.py")

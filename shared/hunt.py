@@ -38,12 +38,6 @@ class SearchQuery:
     to_date: datetime
     value: str
     query: str
-
-
-@dataclass
-class SearchResult:
-    """Represents a SIEM search result"""
-    value: str
     count: int
 
 
@@ -75,9 +69,6 @@ class GenericSIEMConnector(SIEMConnector):
         logger.info(f"Executing query: {query} from {from_date} to {to_date}")
         # TODO: Implement actual SIEM search logic
         return []
-
-
-
 
 
 def extract_iocs(events: List[Dict[str, Any]], ioc_types: List[str]) -> List[IoC]:
@@ -125,17 +116,19 @@ def create_search_queries(iocs: List[IoC], search_days: int) -> List[SearchQuery
             from_date=from_date,
             to_date=to_date,
             value=ioc.value,
-            query=build_search_query(ioc)
+            query=build_search_query(ioc),
+            count=0
         )
         for ioc in iocs
     ]
 
 
-def execute_siem_searches(siem: SIEMConnector, queries: List[SearchQuery]) -> List[SearchResult]:
-    def execute_single_search(query: SearchQuery) -> SearchResult:
+def execute_siem_searches(siem: SIEMConnector, queries: List[SearchQuery]) -> List[SearchQuery]:
+    def execute_single_search(query: SearchQuery) -> SearchQuery:
         results = siem.execute_search(query.query, query.from_date, query.to_date)
         count = len(results) if results else 0
-        return SearchResult(value=query.value, count=count)
+        query.count = count
+        return query
 
     return list(map(execute_single_search, queries))
 
@@ -144,27 +137,19 @@ def save_query_history(queries: List[SearchQuery], filename: str) -> None:
     """Save search query history to CSV"""
     with open(filename, 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        writer.writerow(['From', 'To', 'Value', 'Query'])
+        writer.writerow(['From', 'To', 'Count', 'Value', 'Query'])
         for query in queries:
             writer.writerow([
                 query.from_date.strftime('%Y-%m-%d'),
                 query.to_date.strftime('%Y-%m-%d'),
+                query.count,
                 query.value,
                 query.query
             ])
 
 
-def save_search_results(results: List[SearchResult], filename: str) -> None:
-    """Save search results to CSV"""
-    with open(filename, 'w', newline='', encoding='utf-8') as f:
-        writer = csv.writer(f)
-        writer.writerow(['Value', 'Count'])
-        for result in results:
-            writer.writerow([result.value, result.count])
-
-
 def main(misp_url: str, misp_key: str, misp_days: int, search_days: int,
-         siem_host: str, siem_user: str, siem_pass: str) -> Tuple[List[SearchQuery], List[SearchResult]]:
+         siem_host: str, siem_user: str, siem_pass: str) -> List[SearchQuery]:
 
     # 1. Connect to MISP
     misp = PyMISP(misp_url, misp_key, False)
@@ -183,22 +168,19 @@ def main(misp_url: str, misp_key: str, misp_days: int, search_days: int,
 
     # 5. Execute searches and save results
     queries = create_search_queries(iocs, search_days)
+    execute_siem_searches(siem, queries)
+
     query_history_file = "ibh_query_" + datetime.now().strftime('%Y-%m-%d') + ".csv"
     save_query_history(queries, query_history_file)
-
-    results = execute_siem_searches(siem, queries)
-    results_file = "ibh_hunt_" + datetime.now().strftime('%Y-%m-%d') + ".csv"
-    save_search_results(results, results_file)
-
     logger.info(f"Processed {len(iocs)} IoCs, executed {len(queries)} queries")
 
-    return queries, results
+    return queries
 
 
 if __name__ == "__main__":
     main(
         misp_url=os.getenv('MISP_URL', 'https://localhost'),
-        misp_key=os.getenv('MISP_KEY', 'MmnSCJOUqN97fDaMPJDKHUSQ0FK6FWTIvRESKIo3'),
+        misp_key=os.getenv('MISP_KEY', 'your_misp_key'),
         misp_days=os.getenv('MISP_DAYS', 3),
         search_days=os.getenv('SIEM_SEARCH_TERM', 90),
         siem_host=os.getenv('SIEM_HOST', 'siem.example.com'),
