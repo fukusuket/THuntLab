@@ -23,6 +23,7 @@ else:
 
 tab1, tab2 = st.tabs(["🔍 IOC Hunting", "📊 Threat Detection Data"])
 all_data = []
+combined_df = None
 hunt_files = glob.glob("/shared/ibh_query_*.csv", recursive=True)
 if hunt_files:
     for file_path in hunt_files:
@@ -31,14 +32,14 @@ if hunt_files:
             all_data.append(df)
         except Exception as e:
             st.warning(f"Failed to read: {file_path} - {str(e)}")
-combined_df = pd.concat(all_data, ignore_index=True)
+    combined_df = pd.concat(all_data, ignore_index=True)
 
 with tab1:
     st.subheader(f"🔍 IOC Hunting results ")
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("Found IOCs in Environment")
-        if hunt_files:
+        if combined_df:
             filtered_df = combined_df[combined_df['Count'] > 0]
             if filtered_df.empty:
                 st.info("No IoCs were detected during the specified search period.")
@@ -52,7 +53,7 @@ with tab1:
 
     with col2:
         st.markdown("Executed Search Queries")
-        if hunt_files:
+        if combined_df:
             st.dataframe(combined_df, use_container_width=True, hide_index=True, height=200)
         else:
             st.info("Please create /shared/ibh_query_*.csv with hunt.py")
