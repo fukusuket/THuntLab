@@ -52,7 +52,7 @@ with tab1:
             st.info("Please create /shared/ibh_hunt_*.csv with hunt.py")
 
     with col2:
-        st.markdown("Executed Search Queries")
+        st.markdown(f"Executed Search Queries(Total:{len(combined_df)} queries)")
         if not combined_df.empty:
             st.dataframe(combined_df, use_container_width=True, hide_index=True, height=200)
         else:
