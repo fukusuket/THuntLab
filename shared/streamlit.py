@@ -23,7 +23,7 @@ else:
 
 tab1, tab2 = st.tabs(["🔍 IOC Hunting", "📊 Threat Detection Data"])
 all_data = []
-combined_df = None
+combined_df = pd.DataFrame()
 hunt_files = glob.glob("/shared/ibh_query_*.csv", recursive=True)
 if hunt_files:
     for file_path in hunt_files:
