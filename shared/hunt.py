@@ -170,7 +170,7 @@ def main(misp_url: str, misp_key: str, misp_days: int, search_days: int,
     queries = create_search_queries(iocs, search_days)
     execute_siem_searches(siem, queries)
 
-    query_history_file = "ibh_query_" + datetime.now().strftime('%Y-%m-%d') + ".csv"
+    query_history_file = "ibh_query_" + datetime.now().strftime('%Y%m%d') + ".csv"
     save_query_history(queries, query_history_file)
     logger.info(f"Processed {len(iocs)} IoCs, executed {len(queries)} queries")
 
