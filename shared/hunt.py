@@ -181,8 +181,8 @@ if __name__ == "__main__":
     main(
         misp_url=os.getenv('MISP_URL', 'https://localhost'),
         misp_key=os.getenv('MISP_KEY', 'your_misp_key'),
-        misp_days=os.getenv('MISP_DAYS', 3),
-        search_days=os.getenv('SIEM_SEARCH_TERM', 90),
+        misp_days=int(os.getenv('MISP_DAYS', 3)),
+        search_days=int(os.getenv('SIEM_SEARCH_TERM', 90)),
         siem_host=os.getenv('SIEM_HOST', 'siem.example.com'),
         siem_user=os.getenv('SIEM_USER', 'admin'),
         siem_pass=os.getenv('SIEM_PASS', 'password')

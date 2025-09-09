@@ -39,7 +39,7 @@ with tab1:
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("Found IOCs in Environment")
-        if combined_df:
+        if not combined_df.empty:
             filtered_df = combined_df[combined_df['Count'] > 0]
             if filtered_df.empty:
                 st.info("No IoCs were detected during the specified search period.")
@@ -53,7 +53,7 @@ with tab1:
 
     with col2:
         st.markdown("Executed Search Queries")
-        if combined_df:
+        if not combined_df.empty:
             st.dataframe(combined_df, use_container_width=True, hide_index=True, height=200)
         else:
             st.info("Please create /shared/ibh_query_*.csv with hunt.py")
