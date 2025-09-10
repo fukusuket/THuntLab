@@ -50,7 +50,7 @@ class SIEMConnector(ABC):
         pass
 
     @abstractmethod
-    def execute_search(self, query: str, from_date: datetime, to_date: datetime) -> List[Dict[str, Any]]:
+    def execute_search(self, query: str, from_date: datetime, to_date: datetime) -> int:
         """Execute search query in SIEM"""
         pass
 
@@ -64,11 +64,11 @@ class GenericSIEMConnector(SIEMConnector):
         # TODO: Implement actual SIEM login logic
         return True
 
-    def execute_search(self, query: str, from_date: datetime, to_date: datetime) -> List[Dict[str, Any]]:
+    def execute_search(self, query: str, from_date: datetime, to_date: datetime) -> int:
         """Generic search implementation - to be overridden"""
         logger.info(f"Executing query: {query} from {from_date} to {to_date}")
         # TODO: Implement actual SIEM search logic
-        return []
+        return 0
 
 
 def extract_iocs(events: List[Dict[str, Any]], ioc_types: List[str]) -> List[IoC]:
@@ -125,9 +125,7 @@ def create_search_queries(iocs: List[IoC], search_days: int) -> List[SearchQuery
 
 def execute_siem_searches(siem: SIEMConnector, queries: List[SearchQuery]) -> List[SearchQuery]:
     def execute_single_search(query: SearchQuery) -> SearchQuery:
-        results = siem.execute_search(query.query, query.from_date, query.to_date)
-        count = len(results) if results else 0
-        query.count = count
+        query.count = siem.execute_search(query.query, query.from_date, query.to_date)
         return query
 
     return list(map(execute_single_search, queries))
