@@ -5,10 +5,12 @@ Threat hunting tool that extracts IoCs from MISP and searches them in SIEM
 
 import os
 import csv
+import json
 import logging
+import requests
 import urllib3
 from datetime import datetime, timedelta
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any
 from dataclasses import dataclass
 from functools import reduce
 from pymisp import PyMISP
