@@ -17,7 +17,8 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-        <command>export DAYS_BACK=7
+        <command>export MISP_URL=https://misp-core
+export DAYS_BACK=7
 python3 /shared/threatfeed-collector/cti.py
 cp *.csv /shared/</command>
     </hudson.tasks.Shell>
