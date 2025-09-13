@@ -7,6 +7,8 @@ import os
 import csv
 import json
 import logging
+from pathlib import Path
+
 import requests
 import urllib3
 from datetime import datetime, timedelta
@@ -178,10 +180,16 @@ def main(misp_url: str, misp_key: str, misp_days: int, search_days: int,
 
 
 if __name__ == "__main__":
+    misp_key = os.getenv('MISP_KEY', '')
+    if not misp_key and Path("/shared/authkey").exists():
+        misp_key = Path("/shared/authkey").read_text().strip()
+    else:
+        logger.error("MISP_KEY environment variable or /shared/authkey file must be set")
+        exit(1)
     main(
-        misp_url=os.getenv('MISP_URL', 'https://localhost'),
-        misp_key=os.getenv('MISP_KEY', 'your_misp_key'),
-        misp_days=int(os.getenv('MISP_DAYS', 3)),
+        misp_url=os.getenv('MISP_URL', 'https://misp-core'),
+        misp_key=misp_key,
+        misp_days=int(os.getenv('MISP_EVENT_DAYS_BACK', 3)),
         search_days=int(os.getenv('SIEM_SEARCH_TERM', 90)),
         siem_host=os.getenv('SIEM_HOST', 'siem.example.com'),
         siem_user=os.getenv('SIEM_USER', 'admin'),

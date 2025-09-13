@@ -17,9 +17,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.tasks.Shell>
-        <command>export MISP_URL=https://misp-core
-export MISP_KEY="$(cat /shared/authkey.txt | tr -d '\r\n')"
-export MISP_DAYS=3
+        <command>export MISP_EVENT_DAYS_BACK=3
 export SIEM_SEARCH_TERM=90
 python3 /shared/hunt.py
 cp *.csv /shared/</command>
