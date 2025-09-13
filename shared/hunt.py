@@ -181,8 +181,8 @@ def main(misp_url: str, misp_key: str, misp_days: int, search_days: int,
 
 if __name__ == "__main__":
     misp_key = os.getenv('MISP_KEY', '')
-    if not misp_key and Path("/shared/authkey").exists():
-        misp_key = Path("/shared/authkey").read_text().strip()
+    if not misp_key and Path("/shared/authkey.txt").exists():
+        misp_key = Path("/shared/authkey.txt").read_text().strip()
     else:
         logger.error("MISP_KEY environment variable or /shared/authkey file must be set")
         exit(1)
