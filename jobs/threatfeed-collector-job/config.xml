@@ -18,6 +18,7 @@
   <builders>
     <hudson.tasks.Shell>
         <command>export MISP_URL=https://misp-core
+export RSS_FEEDS_CSV=/shared/threatfeed-collector/rss_feeds.csv
 export DAYS_BACK=7
 python3 /shared/threatfeed-collector/cti.py
 cp *.csv /shared/</command>
