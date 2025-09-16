@@ -28,6 +28,7 @@ services:
       - ./shared:/shared
     working_dir: /shared
     command: streamlit run /shared/streamlit.py --server.port=8081
+    restart: unless-stopped
     networks:
       - app-network
 
