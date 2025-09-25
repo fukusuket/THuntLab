@@ -2,7 +2,29 @@ import streamlit as st
 import pandas as pd
 import os
 import glob
+import re
 from datetime import datetime, timedelta
+
+
+def get_filtered_hunt_files(file_pattern, start_date, end_date, date_pattern=r'(\d{4}-\d{2}-\d{2})'):
+    hunt_files = glob.glob(file_pattern, recursive=True)
+    filtered_hunt_files = []
+    for file_path in hunt_files:
+        filename = os.path.basename(file_path)
+        try:
+            match = re.search(date_pattern, filename)
+            if match:
+                date_str = match.group(1)
+                file_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+                if start_date <= file_date <= end_date:
+                    filtered_hunt_files.append(file_path)
+            else:
+                filtered_hunt_files.append(file_path)
+        except ValueError:
+            filtered_hunt_files.append(file_path)
+
+    return filtered_hunt_files
+
 
 # Page configuration
 st.set_page_config(page_title="Threat Hunting Dashboard", layout="wide")
@@ -24,7 +46,7 @@ else:
 tab1, tab2 = st.tabs(["🔍 IOC Hunting", "📊 Threat Detection Data"])
 all_data = []
 combined_df = pd.DataFrame()
-hunt_files = glob.glob("/shared/ibh_query_*.csv", recursive=True)
+hunt_files = get_filtered_hunt_files("/shared/ibh_query_*.csv", start_date, end_date)
 if hunt_files:
     for file_path in hunt_files:
         try:
@@ -60,7 +82,7 @@ with tab1:
             st.info("Please create /shared/ibh_query_*.csv with hunt.py")
 
     st.subheader(f"🔍 Collected IOCs ")
-    ioc_files = glob.glob("/shared/ioc_stats_*.csv", recursive=True)
+    ioc_files = get_filtered_hunt_files("/shared/ioc_stats_*.csv", start_date, end_date)
     if ioc_files:
         all_data = []
         for file_path in ioc_files:
