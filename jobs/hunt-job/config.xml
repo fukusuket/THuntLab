@@ -1,38 +1,50 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
-  <actions/>
-  <description>Runs existing hunt.py from shared volume</description>
-  <keepDependencies>false</keepDependencies>
-  <properties/>
-  <scm class="hudson.scm.NullSCM"/>
-  <canRoam>true</canRoam>
-  <disabled>false</disabled>
-  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
-  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
-  <triggers>
-    <hudson.triggers.TimerTrigger>
-      <spec>H 11 * * *</spec>
-    </hudson.triggers.TimerTrigger>
-  </triggers>
-  <concurrentBuild>false</concurrentBuild>
-  <builders>
-    <hudson.tasks.Shell>
-        <command>export MISP_URL=https://misp-core
-export MISP_EVENT_DAYS_BACK=3
-export SIEM_SEARCH_TERM=90
-python3 /shared/hunt.py
-cp *.csv /shared/</command>
-    </hudson.tasks.Shell>
-  </builders>
-  <publishers>
-  <hudson.tasks.ArtifactArchiver>
-    <artifacts>*.csv</artifacts>
-    <allowEmptyArchive>false</allowEmptyArchive>
-    <onlyIfSuccessful>false</onlyIfSuccessful>
-    <fingerprint>false</fingerprint>
-    <defaultExcludes>true</defaultExcludes>
-    <caseSensitive>true</caseSensitive>
-  </hudson.tasks.ArtifactArchiver>
-　</publishers>
-  <buildWrappers/>
+    <actions/>
+    <description>Runs existing hunt.py from shared volume</description>
+    <keepDependencies>false</keepDependencies>
+    <properties/>
+    <scm class="hudson.scm.NullSCM"/>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers>
+        <hudson.triggers.TimerTrigger>
+            <spec>H 11 * * *</spec>
+        </hudson.triggers.TimerTrigger>
+    </triggers>
+    <concurrentBuild>false</concurrentBuild>
+    <builders>
+        <hudson.tasks.Shell>
+            <command>export MISP_URL=https://misp-core
+                export MISP_EVENT_DAYS_BACK=3
+                export SIEM_SEARCH_TERM=90
+                python3 /shared/hunt.py
+                cp *.csv /shared/
+            </command>
+        </hudson.tasks.Shell>
+    </builders>
+    <publishers>
+        <hudson.tasks.ArtifactArchiver>
+            <artifacts>*.csv</artifacts>
+            <allowEmptyArchive>false</allowEmptyArchive>
+            <onlyIfSuccessful>false</onlyIfSuccessful>
+            <fingerprint>false</fingerprint>
+            <defaultExcludes>true</defaultExcludes>
+            <caseSensitive>true</caseSensitive>
+        </hudson.tasks.ArtifactArchiver>
+        <com.chikli.hudson.plugin.naginator.NaginatorPublisher plugin="naginator@1.530.vb_6d120f250b_1">
+            <regexpForRerun></regexpForRerun>
+            <rerunIfUnstable>false</rerunIfUnstable>
+            <rerunMatrixPart>false</rerunMatrixPart>
+            <checkRegexp>false</checkRegexp>
+            <regexpForMatrixStrategy>TestParent</regexpForMatrixStrategy>
+            <delay class="com.chikli.hudson.plugin.naginator.FixedDelay">
+                <delay>300</delay>
+            </delay>
+            <maxSchedule>2</maxSchedule>
+        </com.chikli.hudson.plugin.naginator.NaginatorPublisher>
+    </publishers>
+    <buildWrappers/>
 </project>
