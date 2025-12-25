@@ -164,11 +164,17 @@ def main(misp_url: str, misp_key: str, misp_days: int, search_days: int,
     ioc_types = ['ip-dst', 'hostname', 'sha256']
     iocs = extract_iocs(events, ioc_types)
 
-    # 4. Create and execute SIEM searches
+    # 4. Extract EventReport
+    for event in events:
+        if 'EventReport' in event['Event'] and len(event['Event']['EventReport']) > 1:
+            markdown = event['Event']['EventReport'][1]['content']
+            Path(f"report_{event['Event']['date']}_{event['Event']['id']}.md").write_text(markdown, encoding='utf-8')
+
+    # 5. Create and execute SIEM searches
     siem = GenericSIEMConnector()
     siem.login(siem_host, siem_user, siem_pass)
 
-    # 5. Execute searches and save results
+    # 6. Execute searches and save results
     queries = create_search_queries(iocs, search_days)
     execute_siem_searches(siem, queries)
 
@@ -187,7 +193,7 @@ if __name__ == "__main__":
         logger.error("MISP_KEY environment variable or /shared/authkey file must be set")
         exit(1)
     main(
-        misp_url=os.getenv('MISP_URL', 'https://misp-core'),
+        misp_url=os.getenv('MISP_URL', 'https://localhost'),
         misp_key=misp_key,
         misp_days=int(os.getenv('MISP_EVENT_DAYS_BACK', 3)),
         search_days=int(os.getenv('SIEM_SEARCH_TERM', 90)),
