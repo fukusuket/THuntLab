@@ -88,7 +88,7 @@ with tab1:
                 with open(markdown, "r", encoding="utf-8") as f:
                     content = f.read()
                 if keyword:
-                    if keyword.lower() not in content.lower():
+                    if keyword.lower() not in content.lower() and keyword.lower() not in markdown.lower():
                         continue
                 title_match = re.search(r"###\s*タイトル\s*\n\s*(.+)", content)
                 title_text = title_match.group(1).strip() if title_match else os.path.basename(entry["path"])
