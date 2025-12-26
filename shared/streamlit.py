@@ -43,7 +43,7 @@ if isinstance(date_range, tuple) and len(date_range) == 2:
 else:
     start_date, end_date = start_date_default, end_date_default
 
-tab1, tab2, tab3 = st.tabs(["🔍 IOC Hunting", "📊 Threat Detection Data", "📄 Reports"])
+tab1, tab2 = st.tabs(["📄 Reports", "🔍 IOC Hunting"])
 all_data = []
 combined_df = pd.DataFrame()
 hunt_files = get_filtered_hunt_files("/shared/ibh_query_*.csv", start_date, end_date)
@@ -57,6 +57,81 @@ if hunt_files:
     combined_df = pd.concat(all_data, ignore_index=True)
 
 with tab1:
+    st.subheader("📄 Threat Reports")
+    report_files = get_filtered_hunt_files(
+        "/shared/report_*.md", start_date, end_date, r"report_(\d{4}-\d{2}-\d{2})"
+    )
+
+    report_entries = []
+    for file_path in report_files:
+        try:
+            match = re.search(r"report_(\d{4}-\d{2}-\d{2})", os.path.basename(file_path))
+            if not match:
+                continue
+            file_date = datetime.strptime(match.group(1), "%Y-%m-%d").date()
+            report_entries.append({"date": file_date, "path": file_path})
+        except Exception as e:
+            st.warning(f"Failed to parse date from {file_path}: {e}")
+
+    if not report_entries:
+        st.info("No report_*.md files found for the selected date range.")
+    else:
+        for entry in report_entries:
+            try:
+                with open(entry["path"], "r", encoding="utf-8") as f:
+                    content = f.read()
+                title_match = re.search(r"###\s*タイトル\s*\n\s*(.+)", content)
+                title_text = title_match.group(1).strip() if title_match else os.path.basename(entry["path"])
+                label = f"{entry['date'].strftime('%m-%d')} | {title_text}"
+                lines = content.splitlines(True)
+                content = "".join(lines[3:])
+                expander_font_css = """
+                <style>
+                    /* 1. エクスパンダーのタイトル（ラベル）部分 */
+                    .stExpander p {
+                        font-size: 20px !important;
+                    }
+
+                    /* 2. エクスパンダーの中身のテキスト */
+                    .stExpander div[data-testid="stMarkdownContainer"] p {
+                        font-size: 18px !important;
+                    }
+                </style>
+                """
+
+                st.markdown(expander_font_css, unsafe_allow_html=True)
+                with st.expander(label, expanded=False):
+                    font_css = """
+                    <style>
+                        /* 1. 通常のMarkdownテキスト（段落、リストなど） */
+                        .stMarkdown p, .stMarkdown li, .stMarkdown span{
+                            font-size: 14px !important;
+                        }
+
+                        /* 2. テーブル（表）の中の文字 */
+                        /* ヘッダー(th)とセル(td)の両方を指定 */
+                        .stMarkdown table th, .stMarkdown table td {
+                            font-size: 14px !important;
+                        }
+
+                        /* h3 見出しのサイズ設定 */
+                        .stMarkdown h3 {
+                            font-family: 'JetBrains Mono', monospace;
+                            font-size: 18px !important;
+                        }
+
+                        /* インラインコードのサイズ設定 */
+                        .stMarkdown code {
+                            font-size: 14px !important;
+                        }
+                    </style>
+                    """
+                    st.markdown(font_css, unsafe_allow_html=True)
+                    st.markdown(content)
+            except Exception as e:
+                st.warning(f"Failed to read {entry['path']}: {e}")
+
+with tab2:
     st.subheader(f"🔍 IOC Hunting results ")
     col1, col2 = st.columns(2)
     with col1:
@@ -105,128 +180,6 @@ with tab1:
     else:
         st.info("Please create /shared/ioc_stats_*.csv with cti.py")
 
-
-with tab2:
-    csv_path = "/shared/hunt.csv"
-    if os.path.exists(csv_path):
-        st.header("Threat Detection Data")
-        df = pd.read_csv(csv_path)
-        # Main dashboard metrics
-        col1, col2, col3 = st.columns(3)
-
-        with col1:
-            total_threats = len(df)
-            st.metric("Total Threats", total_threats)
-
-        with col2:
-            confirmed_threats = len(df[df['status'] == 'Confirmed'])
-            st.metric("Confirmed Threats", confirmed_threats)
-
-        with col3:
-            critical_threats = len(df[df['severity'] == 'Critical'])
-            st.metric("Critical Threats", critical_threats)
-
-        # Filtering options
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            severity_filter = st.selectbox("Severity Filter:",
-                                           ["All"] + df['severity'].unique().tolist())
-        with col2:
-            threat_type_filter = st.selectbox("Threat Type Filter:",
-                                              ["All"] + df['threat_type'].unique().tolist())
-        with col3:
-            status_filter = st.selectbox("Status Filter:",
-                                         ["All"] + df['status'].unique().tolist())
-
-        # Apply filters
-        filtered_data = df.copy()
-        if severity_filter != "All":
-            filtered_data = filtered_data[filtered_data['severity'] == severity_filter]
-        if threat_type_filter != "All":
-            filtered_data = filtered_data[filtered_data['threat_type'] == threat_type_filter]
-        if status_filter != "All":
-            filtered_data = filtered_data[filtered_data['status'] == status_filter]
-
-        st.dataframe(filtered_data, use_container_width=True)
-
-    else:
-        st.error(f"CSV file not found: {csv_path}")
-        st.info("Please ensure the hunt.csv file exists in the /shared/ directory")
-
-with tab3:
-    st.subheader("📄 Threat Reports")
-    report_files = get_filtered_hunt_files(
-        "./report_*.md", start_date, end_date, r"report_(\d{4}-\d{2}-\d{2})"
-    )
-
-    report_entries = []
-    for file_path in report_files:
-        try:
-            match = re.search(r"report_(\d{4}-\d{2}-\d{2})", os.path.basename(file_path))
-            if not match:
-                continue
-            file_date = datetime.strptime(match.group(1), "%Y-%m-%d").date()
-            report_entries.append({"date": file_date, "path": file_path})
-        except Exception as e:
-            st.warning(f"Failed to parse date from {file_path}: {e}")
-
-    if not report_entries:
-        st.info("No report_*.md files found for the selected date range.")
-    else:
-        for entry in report_entries:
-            try:
-                with open(entry["path"], "r", encoding="utf-8") as f:
-                    content = f.read()
-                title_match = re.search(r"###\s*タイトル\s*\n\s*(.+)", content)
-                title_text = title_match.group(1).strip() if title_match else os.path.basename(entry["path"])
-                label = f"{entry['date'].strftime('%m-%d')} | {title_text}"
-                lines = content.splitlines(True)
-                content = "".join(lines[3:])
-                expander_font_css = """
-                <style>
-                    /* 1. エクスパンダーのタイトル（ラベル）部分 */
-                    .stExpander p {
-                        font-size: 20px !important;
-                    }
-
-                    /* 2. エクスパンダーの中身のテキスト */
-                    .stExpander div[data-testid="stMarkdownContainer"] p {
-                        font-size: 18px !important;
-                    }
-                </style>
-                """
-
-                st.markdown(expander_font_css, unsafe_allow_html=True)
-                with st.expander(label, expanded=False):
-                    font_css = """
-                    <style>
-                        /* 1. 通常のMarkdownテキスト（段落、リストなど） */
-                        .stMarkdown p, .stMarkdown li, .stMarkdown span{
-                            font-size: 14px !important;
-                        }
-                    
-                        /* 2. テーブル（表）の中の文字 */
-                        /* ヘッダー(th)とセル(td)の両方を指定 */
-                        .stMarkdown table th, .stMarkdown table td {
-                            font-size: 14px !important;
-                        }
-
-                        /* h3 見出しのサイズ設定 */
-                        .stMarkdown h3 {
-                            font-family: 'JetBrains Mono', monospace;
-                            font-size: 18px !important;
-                        }
-
-                        /* インラインコードのサイズ設定 */
-                        .stMarkdown code {
-                            font-size: 14px !important;
-                        }
-                    </style>
-                    """
-                    st.markdown(font_css, unsafe_allow_html=True)
-                    st.markdown(content)
-            except Exception as e:
-                st.warning(f"Failed to read {entry['path']}: {e}")
 
 # Footer
 st.markdown("---")

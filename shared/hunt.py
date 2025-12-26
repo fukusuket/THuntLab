@@ -168,7 +168,8 @@ def main(misp_url: str, misp_key: str, misp_days: int, search_days: int,
     for event in events:
         if 'EventReport' in event['Event'] and len(event['Event']['EventReport']) > 1:
             markdown = event['Event']['EventReport'][1]['content']
-            Path(f"report_{event['Event']['date']}_{event['Event']['id']}.md").write_text(markdown, encoding='utf-8')
+            output = Path("/shared").joinpath(Path(f"report_{event['Event']['date']}_{event['Event']['id']}.md"))
+            output.write_text(markdown, encoding='utf-8')
 
     # 5. Create and execute SIEM searches
     siem = GenericSIEMConnector()
