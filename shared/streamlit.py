@@ -96,23 +96,33 @@ with tab1:
         except Exception as e:
             st.warning(f"Failed to parse date from {file_path}: {e}")
 
-    # Sort reports by date (newest first) and path for stability
-    report_entries = sorted(report_entries, key=lambda e: (e["date"], e["path"]), reverse=True)
-
     if not report_entries:
         st.info("No report_*.md files found for the selected date range.")
     else:
-        keyword = st.text_input(
-            "🔍 Keyword Filter",
-            placeholder="Enter keywords separated by spaces (e.g., ransomware phishing)"
-        )
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            keyword = st.text_input(
+                "🔍 Keyword Filter",
+                placeholder="Enter keywords separated by spaces (e.g., ransomware phishing)"
+            )
+
+        with col2:
+            sort_order = st.radio(
+                "↕️ Sort",
+                ["New → Old", "Old → New"],
+                horizontal=True
+            )
+        reverse = True if sort_order == "New → Old" else False
+        report_entries = sorted(report_entries, key=lambda e: (e["date"], e["path"]), reverse=reverse)
         for entry in report_entries:
             try:
                 markdown = entry["path"]
                 with open(markdown, "r", encoding="utf-8") as f:
                     content = f.read()
                 if keyword:
-                    if keyword.lower() not in content.lower() and keyword.lower() not in markdown.lower():
+                    keywords = keyword.lower().split()
+                    search_target = f"{content}\n{markdown}".lower()
+                    if not all(k in search_target for k in keywords):
                         continue
                 title_match = re.search(r"###\s*タイトル\s*\n\s*(.+)", content)
                 title_text = title_match.group(1).strip() if title_match else os.path.basename(entry["path"])
