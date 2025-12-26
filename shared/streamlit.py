@@ -26,6 +26,30 @@ def get_filtered_hunt_files(file_pattern, start_date, end_date, date_pattern=r'(
     return filtered_hunt_files
 
 
+font_css = """
+<style>
+    .stMarkdown p, .stMarkdown li, .stMarkdown span{
+        font-size: 16px !important;
+    }
+
+    .stMarkdown table th, .stMarkdown table td {
+        font-size: 16px !important;
+    }
+
+    .stMarkdown h3 {
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 18px !important;
+    }
+
+    .stMarkdown code {
+        font-size: 16px !important;
+    }
+</style>
+"""
+
+st.markdown(font_css, unsafe_allow_html=True)
+
+
 # Page configuration
 st.set_page_config(page_title="Threat Hunting Dashboard", layout="wide")
 st.title("🛡️Threat Hunting Dashboard")
@@ -43,7 +67,7 @@ if isinstance(date_range, tuple) and len(date_range) == 2:
 else:
     start_date, end_date = start_date_default, end_date_default
 
-tab1, tab2 = st.tabs(["📄 Threat Reports", "🔍 IOC Hunting"])
+tab1, tab2 = st.tabs(["📊 Threat Reports", "🕵️ IOC Hunting"])
 all_data = []
 combined_df = pd.DataFrame()
 hunt_files = get_filtered_hunt_files("/shared/ibh_query_*.csv", start_date, end_date)
@@ -100,33 +124,12 @@ with tab1:
                 lines = content.splitlines(True)
                 content = "".join(lines[3:])
                 with st.expander(label, expanded=False):
-                    font_css = """
-                    <style>
-                        .stMarkdown p, .stMarkdown li, .stMarkdown span{
-                            font-size: 16px !important;
-                        }
-
-                        .stMarkdown table th, .stMarkdown table td {
-                            font-size: 16px !important;
-                        }
-
-                        .stMarkdown h3 {
-                            font-family: 'JetBrains Mono', monospace;
-                            font-size: 18px !important;
-                        }
-
-                        .stMarkdown code {
-                            font-size: 16px !important;
-                        }
-                    </style>
-                    """
-                    st.markdown(font_css, unsafe_allow_html=True)
                     st.markdown(content)
             except Exception as e:
                 st.warning(f"Failed to read {entry['path']}: {e}")
 
 with tab2:
-    st.subheader(f"🔍 IOC Hunting results ")
+    st.subheader(f"IOC Hunting results ")
     col1, col2 = st.columns(2)
     with col1:
         st.markdown("Found IOCs in Environment")
@@ -150,7 +153,7 @@ with tab2:
         else:
             st.info("Please create /shared/ibh_query_*.csv with hunt.py")
 
-    st.subheader(f"🔍 Collected IOCs ")
+    st.subheader(f"Collected IOCs ")
     ioc_files = get_filtered_hunt_files("/shared/ioc_stats_*.csv", start_date, end_date)
     if ioc_files:
         all_data = []
