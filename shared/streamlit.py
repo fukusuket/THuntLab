@@ -31,7 +31,7 @@ st.set_page_config(page_title="Threat Hunting Dashboard", layout="wide")
 st.title("🛡️Threat Hunting Dashboard")
 
 end_date_default = datetime.now().date()
-start_date_default = end_date_default - timedelta(days=7)
+start_date_default = end_date_default - timedelta(days=3)
 date_range = st.date_input(
     "Select date range",
     (start_date_default, end_date_default),
