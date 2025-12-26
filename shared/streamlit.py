@@ -73,6 +73,9 @@ with tab1:
         except Exception as e:
             st.warning(f"Failed to parse date from {file_path}: {e}")
 
+    # Sort reports by date (newest first) and path for stability
+    report_entries = sorted(report_entries, key=lambda e: (e["date"], e["path"]), reverse=True)
+
     if not report_entries:
         st.info("No report_*.md files found for the selected date range.")
     else:
