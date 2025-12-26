@@ -133,6 +133,7 @@ with tab1:
                 label = f"{entry['date'].strftime('%m-%d')} | {source} | {title_text}"
                 lines = content.splitlines(True)
                 content = "".join(lines[3:])
+                content = content.replace("### 概要", f"### {title_text}")
                 with st.expander(label, expanded=False):
                     st.markdown(content)
             except Exception as e:
