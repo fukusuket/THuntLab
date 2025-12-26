@@ -31,7 +31,7 @@ st.set_page_config(page_title="Threat Hunting Dashboard", layout="wide")
 st.title("🛡️Threat Hunting Dashboard")
 
 end_date_default = datetime.now().date()
-start_date_default = end_date_default - timedelta(days=3)
+start_date_default = end_date_default - timedelta(days=2)
 date_range = st.date_input(
     "Select date range",
     (start_date_default, end_date_default),
@@ -92,33 +92,18 @@ with tab1:
                 label = f"{entry['date'].strftime('%m-%d')} | {source} | {title_text}"
                 lines = content.splitlines(True)
                 content = "".join(lines[3:])
-                expander_font_css = """
-                <style>
-                    /* 1. エクスパンダーのタイトル（ラベル）部分 */
-                    .stExpander p {
-                        font-size: 20px !important;
-                    }
-
-                    /* 2. エクスパンダーの中身のテキスト */
-                    .stExpander div[data-testid="stMarkdownContainer"] p {
-                        font-size: 18px !important;
-                    }
-                </style>
-                """
-
-                st.markdown(expander_font_css, unsafe_allow_html=True)
                 with st.expander(label, expanded=False):
                     font_css = """
                     <style>
                         /* 1. 通常のMarkdownテキスト（段落、リストなど） */
                         .stMarkdown p, .stMarkdown li, .stMarkdown span{
-                            font-size: 14px !important;
+                            font-size: 16px !important;
                         }
 
                         /* 2. テーブル（表）の中の文字 */
                         /* ヘッダー(th)とセル(td)の両方を指定 */
                         .stMarkdown table th, .stMarkdown table td {
-                            font-size: 14px !important;
+                            font-size: 16px !important;
                         }
 
                         /* h3 見出しのサイズ設定 */
@@ -129,7 +114,7 @@ with tab1:
 
                         /* インラインコードのサイズ設定 */
                         .stMarkdown code {
-                            font-size: 14px !important;
+                            font-size: 16px !important;
                         }
                     </style>
                     """
