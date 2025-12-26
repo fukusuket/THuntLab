@@ -33,7 +33,7 @@ st.title("🛡️Threat Hunting Dashboard")
 end_date_default = datetime.now().date()
 start_date_default = end_date_default - timedelta(days=2)
 date_range = st.date_input(
-    "Select date range",
+    "",
     (start_date_default, end_date_default),
     key="hunt_date_range",
 )
