@@ -43,7 +43,7 @@ if isinstance(date_range, tuple) and len(date_range) == 2:
 else:
     start_date, end_date = start_date_default, end_date_default
 
-tab1, tab2 = st.tabs(["📄 Reports", "🔍 IOC Hunting"])
+tab1, tab2 = st.tabs(["📄 Threat Reports", "🔍 IOC Hunting"])
 all_data = []
 combined_df = pd.DataFrame()
 hunt_files = get_filtered_hunt_files("/shared/ibh_query_*.csv", start_date, end_date)
@@ -57,7 +57,6 @@ if hunt_files:
     combined_df = pd.concat(all_data, ignore_index=True)
 
 with tab1:
-    st.subheader("📄 Threat Reports")
     report_files = get_filtered_hunt_files(
         "/shared/report_*.md", start_date, end_date, r"report_(\d{4}-\d{2}-\d{2})"
     )
