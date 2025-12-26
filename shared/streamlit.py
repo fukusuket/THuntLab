@@ -78,11 +78,18 @@ with tab1:
     if not report_entries:
         st.info("No report_*.md files found for the selected date range.")
     else:
+        keyword = st.text_input(
+            "🔍 Keyword Filter",
+            placeholder="Enter keywords separated by spaces (e.g., ransomware phishing)"
+        )
         for entry in report_entries:
             try:
                 markdown = entry["path"]
                 with open(markdown, "r", encoding="utf-8") as f:
                     content = f.read()
+                if keyword:
+                    if keyword.lower() not in content.lower():
+                        continue
                 title_match = re.search(r"###\s*タイトル\s*\n\s*(.+)", content)
                 title_text = title_match.group(1).strip() if title_match else os.path.basename(entry["path"])
                 source = ""
@@ -95,24 +102,19 @@ with tab1:
                 with st.expander(label, expanded=False):
                     font_css = """
                     <style>
-                        /* 1. 通常のMarkdownテキスト（段落、リストなど） */
                         .stMarkdown p, .stMarkdown li, .stMarkdown span{
                             font-size: 16px !important;
                         }
 
-                        /* 2. テーブル（表）の中の文字 */
-                        /* ヘッダー(th)とセル(td)の両方を指定 */
                         .stMarkdown table th, .stMarkdown table td {
                             font-size: 16px !important;
                         }
 
-                        /* h3 見出しのサイズ設定 */
                         .stMarkdown h3 {
                             font-family: 'JetBrains Mono', monospace;
                             font-size: 18px !important;
                         }
 
-                        /* インラインコードのサイズ設定 */
                         .stMarkdown code {
                             font-size: 16px !important;
                         }
