@@ -7,6 +7,7 @@ import os
 import csv
 import json
 import logging
+import re
 from pathlib import Path
 
 import requests
@@ -167,8 +168,12 @@ def main(misp_url: str, misp_key: str, misp_days: int, search_days: int,
     # 4. Extract EventReport
     for event in events:
         if 'EventReport' in event['Event'] and len(event['Event']['EventReport']) > 1:
+            title = ""
+            match = re.search(r'\[([^\]]+)\]', event['Event']['info'])
+            if match:
+                title = match.group(1)
             markdown = event['Event']['EventReport'][1]['content']
-            output = Path("/shared").joinpath(Path(f"report_{event['Event']['date']}_{event['Event']['id']}.md"))
+            output = Path("/shared").joinpath(Path(f"report_{event['Event']['date']}_{event['Event']['id']}_{title}.md"))
             output.write_text(markdown, encoding='utf-8')
 
     # 5. Create and execute SIEM searches

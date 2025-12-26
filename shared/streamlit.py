@@ -80,11 +80,16 @@ with tab1:
     else:
         for entry in report_entries:
             try:
-                with open(entry["path"], "r", encoding="utf-8") as f:
+                markdown = entry["path"]
+                with open(markdown, "r", encoding="utf-8") as f:
                     content = f.read()
                 title_match = re.search(r"###\s*タイトル\s*\n\s*(.+)", content)
                 title_text = title_match.group(1).strip() if title_match else os.path.basename(entry["path"])
-                label = f"{entry['date'].strftime('%m-%d')} | {title_text}"
+                source = ""
+                match = re.search(r".*_(.*?)\.md", markdown)
+                if match:
+                    source = match.group(1)
+                label = f"{entry['date'].strftime('%m-%d')} | {source} | {title_text}"
                 lines = content.splitlines(True)
                 content = "".join(lines[3:])
                 expander_font_css = """
