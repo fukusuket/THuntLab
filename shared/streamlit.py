@@ -53,17 +53,17 @@ def matches_keywords(content: str, keywords: str) -> bool:
 font_css = """
 <style>
     .stMarkdown p, .stMarkdown li, .stMarkdown span{
-        font-size: 16px !important;
+        font-size: 14px !important;
     }
     .stMarkdown table th, .stMarkdown table td {
-        font-size: 16px !important;
+        font-size: 14px !important;
     }
     .stMarkdown h3 {
         font-family: 'JetBrains Mono', monospace;
         font-size: 18px !important;
     }
     .stMarkdown code {
-        font-size: 16px !important;
+        font-size: 14px !important;
     }
 </style>
 """
