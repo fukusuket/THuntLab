@@ -59,7 +59,6 @@ font_css = """
         font-size: 14px !important;
     }
     .stMarkdown h3 {
-        font-family: 'JetBrains Mono', monospace;
         font-size: 18px !important;
     }
     .stMarkdown code {
