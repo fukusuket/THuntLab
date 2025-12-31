@@ -199,7 +199,7 @@ if __name__ == "__main__":
         logger.error("MISP_KEY environment variable or /shared/authkey file must be set")
         exit(1)
     main(
-        misp_url=os.getenv('MISP_URL', 'https://localhost'),
+        misp_url=os.getenv('MISP_URL', 'https://misp-core'),
         misp_key=misp_key,
         misp_days=int(os.getenv('MISP_EVENT_DAYS_BACK', 3)),
         search_days=int(os.getenv('SIEM_SEARCH_TERM', 90)),
