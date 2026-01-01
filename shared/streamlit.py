@@ -108,6 +108,8 @@ with tab1:
             try:
                 with open(entry["path"], "r", encoding="utf-8") as f:
                     content = f.read()
+                if not content.strip():
+                    continue
                 if not matches_keywords(f"{content}\n{entry['path']}", keyword):
                     continue
 
