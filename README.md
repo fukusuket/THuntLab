@@ -70,9 +70,8 @@ Use the included Makefile for easy service management:
 The `./shared` directory serves as a common workspace:
 
 - `hunt.py`: Example threat hunting script executed by Jenkins
-- `threatfeed-collector/cti.py`: Example script for MISP interaction
+- `threatfeed-collector/ioc_collect.py`: Example script for MISP interaction
 - `streamlit.py`: Streamlit dashboard application
-- `notebook.ipynb`: Jupyter Notebook for data exploration
 - Additional scripts and data files can be placed here for cross-service access
 
 ## Related Projects
