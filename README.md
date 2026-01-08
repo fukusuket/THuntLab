@@ -126,7 +126,7 @@ Contributions are welcome!
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0-only). See `LICENSE` for full terms, including requirements to provide source when running modified versions as network services.
 
 ## Acknowledgments
 This tool is made possible thanks to the maintainers and contributors of these outstanding open-source projects.
