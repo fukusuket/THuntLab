@@ -79,9 +79,11 @@ if isinstance(date_range, tuple) and len(date_range) == 2:
     start_date, end_date = date_range
 
 hunt_files = filter_files_by_date("/shared/ibh_query_*.csv", start_date, end_date)
+if hunt_files:
+    hunt_files = [max(hunt_files, key=os.path.getmtime)]
 hunt_df = load_csvs(hunt_files)
 if not hunt_df.empty:
-    hunt_df = hunt_df.drop_duplicates()
+    hunt_df = hunt_df.drop_duplicates().sort_values(by="Count", ascending=False)
 
 tab1, tab2 = st.tabs(["📊 Threat Reports", "🕵️ IOC Hunting"])
 
@@ -140,7 +142,7 @@ with tab2:
             else:
                 st.error('IoCs were detected during the specified search period.', icon="🚨")
                 cols = [c for c in ['Value', 'Count'] if c in detected.columns]
-                st.dataframe(detected.loc[:, cols], use_container_width=True, hide_index=True)
+                st.dataframe(detected.loc[:, cols], use_container_width=True, hide_index=True, height=200)
         else:
             st.info("Please create /shared/ibh_hunt_*.csv with hunt.py")
 
