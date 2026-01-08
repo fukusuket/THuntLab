@@ -137,6 +137,7 @@ with tab2:
     with col1:
         st.markdown("Found IOCs in Environment")
         if not hunt_df.empty:
+            hunt_df = hunt_df[(hunt_df['date'] >= start_date) & (hunt_df['date'] <= end_date)]
             detected = hunt_df[hunt_df['Count'] > 0]
             if detected.empty:
                 st.info("No IoCs were detected during the specified search period.")
@@ -151,6 +152,7 @@ with tab2:
         st.markdown("Executed Search Queries")
         if not hunt_df.empty:
             st.info(f"{len(hunt_df)} queries were executed.")
+            hunt_df = hunt_df[(hunt_df['date'] >= start_date) & (hunt_df['date'] <= end_date)]
             st.dataframe(hunt_df, use_container_width=True, hide_index=True, height=200)
         else:
             st.info("Please create /shared/ibh_query_*.csv with hunt.py")
