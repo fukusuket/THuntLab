@@ -165,6 +165,7 @@ with tab2:
             ioc_df['date'] = pd.to_datetime(ioc_df['date']).dt.date
             ioc_df = ioc_df.sort_values('date', ascending=False)
             ioc_df = ioc_df[(ioc_df['date'] >= start_date) & (ioc_df['date'] <= end_date)]
+            ioc_df = ioc_df.drop_duplicates()
             st.dataframe(ioc_df, use_container_width=True, hide_index=True)
     else:
         st.info("Please create /shared/ioc_stats_*.csv with cti.py")
