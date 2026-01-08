@@ -131,7 +131,7 @@ Questions? Open an issue!
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Acknowledgments
-
+This tool is made possible thanks to the maintainers and contributors of these outstanding open-source projects.
 - [MISP](https://www.misp-project.org/) Project for the threat intelligence platform
 - [Jenkins](https://www.jenkins.io/) community for the automation server
 - [Streamlit](https://streamlit.io/) team for the data application framework
