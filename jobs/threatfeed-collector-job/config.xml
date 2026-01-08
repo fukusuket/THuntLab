@@ -20,9 +20,9 @@
             <command>export DAYS_BACK=7
                 python3 /shared/threatfeed-collector/ioc_collect.py
                 cp *.csv /shared/
-                ls -1t /shared/ibh_query_*.csv 2>/dev/null | tail -n +30 | tr '\n' '\0' | xargs -0 rm --
-                ls -1t /shared/ioc_stats_*.csv 2>/dev/null | tail -n +30 | tr '\n' '\0' | xargs -0 rm --
-                ls -1t /shared/report_*.md     2>/dev/null | tail -n +30 | tr '\n' '\0' | xargs -0 rm --
+                ls -1t /shared/ibh_query_*.csv 2>/dev/null | tail -n +30 | tr '\n' '\0' | xargs -0 rm -- || true
+                ls -1t /shared/ioc_stats_*.csv 2>/dev/null | tail -n +30 | tr '\n' '\0' | xargs -0 rm -- || true
+                ls -1t /shared/report_*.md     2>/dev/null | tail -n +30 | tr '\n' '\0' | xargs -0 rm -- || true
             </command>
         </hudson.tasks.Shell>
     </builders>
