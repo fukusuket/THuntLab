@@ -80,7 +80,8 @@ if isinstance(date_range, tuple) and len(date_range) == 2:
 
 hunt_files = filter_files_by_date("/shared/ibh_query_*.csv", start_date, end_date)
 if hunt_files:
-    hunt_files = [max(hunt_files, key=os.path.getmtime)]
+    latest = max(hunt_files, key=lambda p: datetime.strptime(re.search(r'(\d{8})', os.path.basename(p)).group(1), "%Y%m%d"))
+    hunt_files = [latest]
 hunt_df = load_csvs(hunt_files)
 if not hunt_df.empty:
     hunt_df = hunt_df.drop_duplicates().sort_values(by="Count", ascending=False)
