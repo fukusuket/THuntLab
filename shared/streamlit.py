@@ -72,7 +72,7 @@ st.set_page_config(page_title="Threat Hunting Dashboard", layout="wide")
 st.title("🛡️Threat Hunting Dashboard")
 
 end_date = datetime.now().date()
-start_date = end_date - timedelta(days=3)
+start_date = end_date - timedelta(days=2)
 date_range = st.date_input("", (start_date, end_date), key="hunt_date_range")
 
 if isinstance(date_range, tuple) and len(date_range) == 2:
