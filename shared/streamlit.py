@@ -85,7 +85,7 @@ if hunt_files:
 hunt_df = load_csvs(hunt_files)
 if not hunt_df.empty:
     hunt_df['To'] = pd.to_datetime(hunt_df['To']).dt.date
-    hunt_df = hunt_df[(hunt_df['date'] >= start_date) & (hunt_df['date'] <= end_date)]
+    hunt_df = hunt_df[(hunt_df['To'] >= start_date) & (hunt_df['To'] <= end_date)]
     hunt_df = hunt_df.drop_duplicates().sort_values(by="Count", ascending=False)
 
 tab1, tab2 = st.tabs(["📊 Threat Reports", "🕵️ IOC Hunting"])
