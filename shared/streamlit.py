@@ -47,6 +47,7 @@ def extract_source(path: str) -> str:
 def matches_keywords(content: str, keywords: str) -> bool:
     if not keywords:
         return True
+    content = content.replace("[.]", ".")
     return all(k in content.lower() for k in keywords.lower().split())
 
 
