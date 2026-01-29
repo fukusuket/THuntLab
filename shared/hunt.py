@@ -18,6 +18,7 @@ from dataclasses import dataclass
 from functools import reduce
 from pymisp import PyMISP
 from abc import ABC, abstractmethod
+from concurrent.futures import ThreadPoolExecutor
 
 urllib3.disable_warnings()
 
@@ -128,12 +129,13 @@ def create_search_queries(iocs: List[IoC], search_days: int) -> List[SearchQuery
     ]
 
 
-def execute_siem_searches(siem: SIEMConnector, queries: List[SearchQuery]) -> List[SearchQuery]:
+def execute_siem_searches(siem: SIEMConnector, queries: List[SearchQuery], max_workers: int | None = None) -> List[SearchQuery]:
     def execute_single_search(query: SearchQuery) -> SearchQuery:
         query.count = siem.execute_search(query.query, query.from_date, query.to_date)
         return query
 
-    return list(map(execute_single_search, queries))
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        return list(executor.map(execute_single_search, queries))
 
 
 def save_query_history(queries: List[SearchQuery], filename: str) -> None:
@@ -182,7 +184,8 @@ def main(misp_url: str, misp_key: str, misp_days: int, search_days: int,
 
     # 6. Execute searches and save results
     queries = create_search_queries(iocs, search_days)
-    execute_siem_searches(siem, queries)
+    max_workers = int(os.getenv('SIEM_MAX_WORKERS', '4')) or None
+    execute_siem_searches(siem, queries, max_workers=max_workers)
 
     query_history_file = "ibh_query_" + datetime.now().strftime('%Y%m%d') + ".csv"
     save_query_history(queries, query_history_file)
