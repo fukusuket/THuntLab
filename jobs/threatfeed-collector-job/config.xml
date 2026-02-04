@@ -1,7 +1,7 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>Runs existing threatfeed-collector/cti.py from shared volume</description>
+    <description>Runs existing threatfeed-collector/ioc_collect.py from shared volume</description>
     <keepDependencies>false</keepDependencies>
     <properties/>
     <scm class="hudson.scm.NullSCM"/>
@@ -17,8 +17,7 @@
     <concurrentBuild>false</concurrentBuild>
     <builders>
         <hudson.tasks.Shell>
-            <command>export DAYS_BACK=3
-                python3 /shared/threatfeed-collector/ioc_collect.py
+            <command>python3 /shared/threatfeed-collector/ioc_collect.py
                 cp *.csv /shared/
                 ls -1t /shared/ibh_query_*.csv 2>/dev/null | tail -n +30 | tr '\n' '\0' | xargs -0 rm -- || true
                 ls -1t /shared/ioc_stats_*.csv 2>/dev/null | tail -n +30 | tr '\n' '\0' | xargs -0 rm -- || true
