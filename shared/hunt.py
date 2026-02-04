@@ -19,6 +19,7 @@ from functools import reduce
 from pymisp import PyMISP
 from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor
+from dotenv import load_dotenv
 
 urllib3.disable_warnings()
 
@@ -27,6 +28,8 @@ logging.basicConfig(
     format='%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+load_dotenv(Path(__file__).with_name(".env"))
 
 
 @dataclass
