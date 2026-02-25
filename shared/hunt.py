@@ -8,6 +8,7 @@ import csv
 import json
 import logging
 import re
+import time
 from pathlib import Path
 
 import requests
@@ -132,13 +133,37 @@ def create_search_queries(iocs: List[IoC], search_days: int) -> List[SearchQuery
     ]
 
 
+def execute_single_search(siem: SIEMConnector, query: SearchQuery,
+                          retry_count: int, retry_interval: int) -> SearchQuery:
+    """Execute a single SIEM search with retry logic"""
+    last_exception = None
+    for attempt in range(1, retry_count + 1):
+        try:
+            query.count = siem.execute_search(query.query, query.from_date, query.to_date)
+            return query
+        except Exception as e:
+            last_exception = e
+            logger.warning(
+                f"Search failed (attempt {attempt}/{retry_count}) for query '{query.query}': {e}"
+            )
+            if attempt < retry_count:
+                logger.info(f"Retrying in {retry_interval} seconds...")
+                time.sleep(retry_interval)
+    logger.error(f"All {retry_count} attempts failed for query '{query.query}': {last_exception}")
+    query.count = -1
+    return query
+
+
 def execute_siem_searches(siem: SIEMConnector, queries: List[SearchQuery], max_workers: int | None = None) -> List[SearchQuery]:
-    def execute_single_search(query: SearchQuery) -> SearchQuery:
-        query.count = siem.execute_search(query.query, query.from_date, query.to_date)
-        return query
+    retry_count = int(os.getenv('SIEM_RETRY_COUNT', '3'))
+    retry_interval = int(os.getenv('SIEM_RETRY_INTERVAL', '60'))
 
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        return list(executor.map(execute_single_search, queries))
+        futures = [
+            executor.submit(execute_single_search, siem, query, retry_count, retry_interval)
+            for query in queries
+        ]
+        return [f.result() for f in futures]
 
 
 def save_query_history(queries: List[SearchQuery], filename: str) -> None:
