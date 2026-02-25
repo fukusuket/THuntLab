@@ -89,7 +89,7 @@ if not hunt_df.empty:
     hunt_df = hunt_df[(hunt_df['To'] >= start_date) & (hunt_df['To'] <= end_date)]
     hunt_df = hunt_df.drop_duplicates().sort_values(by="Count", ascending=False)
 
-tab1, tab2 = st.tabs(["📊 Threat Reports", "🕵️ IOC Hunting"])
+tab1, tab2, tab3 = st.tabs(["📊 Threat Reports", "🕵️ IOC Hunting", "😶‍🌫️ ABC Hunting"])
 
 with tab1:
     report_files = filter_files_by_date("/shared/report_*.md", start_date, end_date, r"report_(\d{4}-\d{2}-\d{2})")
@@ -170,6 +170,75 @@ with tab2:
             st.dataframe(ioc_df, use_container_width=True, hide_index=True)
     else:
         st.info("Please create /shared/ioc_stats_*.csv with cti.py")
+
+with tab3:
+    abc_exclude_kw = st.text_input(
+        "🔍 Exclude Keyword Filter",
+        placeholder="Enter keywords to exclude rows (partial match, comma or space-separated)",
+        key="abc_exclude_kw",
+    )
+
+    def load_abc_csvs(pattern: str, start_date, end_date) -> pd.DataFrame:
+        files = glob.glob(pattern)
+        dfs = []
+        for path in files:
+            m = re.search(r'(\d{8})', os.path.basename(path))
+            if m:
+                file_date = datetime.strptime(m.group(1), "%Y%m%d").date()
+                if start_date <= file_date <= end_date:
+                    try:
+                        df = pd.read_csv(path)
+                        df['date'] = file_date
+                        dfs.append(df)
+                    except Exception as e:
+                        st.warning(f"Failed to read: {path} - {str(e)}")
+        return pd.concat(dfs, ignore_index=True) if dfs else pd.DataFrame()
+
+    def exclude_rows(df: pd.DataFrame, keywords: str) -> pd.DataFrame:
+        if not keywords or df.empty:
+            return df
+        for kw in [k.strip() for k in re.split(r'[,\s]+', keywords.lower()) if k.strip()]:
+            mask = df.apply(lambda row: any(kw in str(v).lower() for v in row), axis=1)
+            df = df[~mask]
+        return df
+
+    abc_proc_df = load_abc_csvs("/shared/abc-process-*.csv", start_date, end_date)
+    abc_net_df = load_abc_csvs("/shared/abc-network-*.csv", start_date, end_date)
+
+    abc_proc_df = exclude_rows(abc_proc_df, abc_exclude_kw)
+    abc_net_df = exclude_rows(abc_net_df, abc_exclude_kw)
+
+    def render_stacked_bar(df: pd.DataFrame, date_col: str, category_col: str, value_col: str, title: str):
+        if df.empty or category_col not in df.columns:
+            st.info(f"No data available for: {title}")
+            return
+        df[date_col] = pd.to_datetime(df[date_col])
+        pivot = df.groupby([date_col, category_col])[value_col].sum().reset_index()
+        pivot = pivot.pivot_table(index=date_col, columns=category_col, values=value_col, fill_value=0)
+        pivot = pivot.sort_index()
+        pivot.index = pivot.index.strftime('%m-%d')
+        st.markdown(f"**{title}**")
+        st.bar_chart(pivot)
+
+    col_left, col_right = st.columns(2)
+    with col_left:
+        render_stacked_bar(abc_proc_df.copy(), 'date', 'process_name', 'count', 'ABC Process Name (Daily)')
+        render_stacked_bar(abc_net_df.copy(), 'date', 'domain', 'count', 'ABC Network Domain (Daily)')
+    with col_right:
+        render_stacked_bar(abc_proc_df.copy(), 'date', 'org', 'count', 'ABC Process Org (Daily)')
+        render_stacked_bar(abc_net_df.copy(), 'date', 'email', 'count', 'ABC Network Email (Daily)')
+
+    st.subheader("ABC Process Details")
+    if not abc_proc_df.empty:
+        st.dataframe(abc_proc_df.sort_values('date', ascending=False), use_container_width=True, hide_index=True)
+    else:
+        st.info("Please create /shared/abc-process-*.csv")
+
+    st.subheader("ABC Network Details")
+    if not abc_net_df.empty:
+        st.dataframe(abc_net_df.sort_values('date', ascending=False), use_container_width=True, hide_index=True)
+    else:
+        st.info("Please create /shared/abc-network-*.csv")
 
 st.markdown("---")
 st.markdown("*🛡️ Cyber Threat Hunting Dashboard - Real-time Security Monitoring*")
