@@ -113,6 +113,8 @@ services:
       - "443:443"
     networks:
       - app-network
+    environment:
+      - "ENABLE_THEMES=true"
 
 volumes:
   jenkins_home:
