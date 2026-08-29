@@ -13,6 +13,12 @@ help:
 	@echo "  clean      - Remove all services and volumes"
 	@echo "  dev        - Build and start all services"
 	@echo ""
+	@echo "Verification (see AGENTS.md section 3):"
+	@echo "  check            - Tier 0 + Tier 1. Offline, no services. THE gate."
+	@echo "  check-tier0      - Syntax + compose/job config validation"
+	@echo "  check-tier1      - Root test suite (tests/)"
+	@echo "  check-submodule  - threatfeed-collector tests (known-red baseline!)"
+	@echo ""
 	@echo "Individual service commands:"
 	@echo "  jenkins-build    - Build only Jenkins"
 	@echo "  jenkins-up       - Start only Jenkins"
@@ -116,3 +122,31 @@ jupyter-logs:
 
 jupyter-shell:
 	docker compose -f $(COMPOSE_FILE) exec jupyter /bin/bash
+
+# ---------------------------------------------------------------------------
+# Verification. See AGENTS.md section 3.
+#
+# `make check` is the loop-closing command: one invocation, one exit code, no
+# running services, no network, no credentials. Keep it green.
+# ---------------------------------------------------------------------------
+
+.PHONY: check check-tier0 check-tier1 check-submodule
+check: check-tier0 check-tier1
+	@echo "== check: PASS =="
+
+check-tier0:
+	@echo "== Tier 0: syntax and configuration =="
+	python3 -m py_compile shared/hunt.py shared/streamlit.py
+	docker compose -f $(COMPOSE_FILE) config -q
+	python3 -c "import xml.etree.ElementTree as E, glob; [E.parse(p) for p in glob.glob('jobs/*/config.xml')]"
+
+check-tier1:
+	@echo "== Tier 1: root tests =="
+	python3 -m pytest tests/ -q
+
+# Deliberately NOT part of `check`: the submodule suite has a known-red
+# baseline (see AGENTS.md section 10). Compare against that baseline; do not
+# expect a clean run.
+check-submodule:
+	@echo "== Submodule tests (baseline: 4 failed, 45 passed) =="
+	cd shared/threatfeed-collector && python3 -m pytest -q

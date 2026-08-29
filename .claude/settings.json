@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(make check:*)",
+      "Bash(make check-tier0:*)",
+      "Bash(make check-tier1:*)",
+      "Bash(make check-submodule:*)",
+      "Bash(make help:*)",
+      "Bash(make status:*)",
+      "Bash(python3 -m pytest:*)",
+      "Bash(python3 -m py_compile:*)",
+      "Bash(ruff check:*)",
+      "Bash(docker compose -f docker-compose.yml config:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)",
+      "Bash(git ls-files:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(git submodule status:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(rg:*)",
+      "Bash(head:*)",
+      "Bash(wc:*)",
+      "Bash(sed -n:*)"
+    ],
+    "deny": [
+      "Read(./shared/authkey.txt)",
+      "Read(./**/.env)",
+      "Read(./**/.env.*)",
+      "Bash(cat ./shared/authkey.txt)",
+      "Bash(sudo:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git add -A:*)",
+      "Bash(git add .:*)",
+      "Bash(git add --all:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "Bash(dig:*)",
+      "Bash(nslookup:*)",
+      "Bash(host:*)",
+      "Bash(ping:*)",
+      "Bash(make clean:*)",
+      "Bash(docker compose down -v:*)",
+      "Bash(docker volume rm:*)"
+    ]
+  }
+}
