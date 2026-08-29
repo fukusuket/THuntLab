@@ -1,0 +1,7 @@
+pytest
+pymisp
+streamlit
+pandas
+requests
+python-dotenv
+urllib3

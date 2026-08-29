@@ -208,6 +208,7 @@ __marimo__/
 
 *.csv
 *.txt
+!requirements-dev.txt
 .env
 # THuntLab: generated threat-hunting artifacts.
 # report_*.md is LLM output over scraped, attacker-influenceable article text.
