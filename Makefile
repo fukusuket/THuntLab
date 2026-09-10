@@ -17,7 +17,7 @@ help:
 	@echo "  check            - Tier 0 + Tier 1. Offline, no services. THE gate."
 	@echo "  check-tier0      - Syntax + compose/job config validation"
 	@echo "  check-tier1      - Root test suite (tests/)"
-	@echo "  check-submodule  - threatfeed-collector tests (known-red baseline!)"
+	@echo "  check-submodule  - threatfeed-collector tests (expected green)"
 	@echo ""
 	@echo "Individual service commands:"
 	@echo "  jenkins-build    - Build only Jenkins"
@@ -137,6 +137,7 @@ check: check-tier0 check-tier1
 check-tier0:
 	@echo "== Tier 0: syntax and configuration =="
 	python3 -m py_compile shared/hunt.py shared/streamlit.py
+	python3 -c "import ast, pathlib; [ast.parse(p.read_text(), str(p)) for p in pathlib.Path('.claude/hooks').glob('*.py')]"
 	docker compose -f $(COMPOSE_FILE) config -q
 	python3 -c "import xml.etree.ElementTree as E, glob; [E.parse(p) for p in glob.glob('jobs/*/config.xml')]"
 
@@ -144,9 +145,9 @@ check-tier1:
 	@echo "== Tier 1: root tests =="
 	python3 -m pytest tests/ -q
 
-# Deliberately NOT part of `check`: the submodule suite has a known-red
-# baseline (see AGENTS.md section 10). Compare against that baseline; do not
-# expect a clean run.
+# Deliberately NOT part of `check`: the submodule pins its own dependencies,
+# which the root gate does not install (see AGENTS.md section 3). Expected
+# result is green - a failure here is real.
 check-submodule:
-	@echo "== Submodule tests (baseline: 4 failed, 45 passed) =="
+	@echo "== Submodule tests (expected: all green) =="
 	cd shared/threatfeed-collector && python3 -m pytest -q

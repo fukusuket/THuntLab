@@ -1,0 +1,43 @@
+{
+  "_comment": [
+    "Hosts .claude/hooks/guard-network.sh will let through. Everything else is",
+    "denied outright - that is the point: AGENTS.md rule 2 says IoCs in this repo",
+    "are live, and a permission allow-list cannot express 'deny everything else'.",
+    "",
+    "Add a host only for documentation or package-registry lookups. NEVER add a",
+    "domain that came out of shared/, MISP, a report, or a feed, however harmless",
+    "it looks - those are the indicators this lab exists to handle.",
+    "",
+    "A leading '*.' matches any subdomain at any depth, and does not match the",
+    "bare domain; list the bare domain separately if you need it.",
+    "",
+    "THREE lists have to agree, and nothing enforces that for you:",
+    "  1. this file          - the hook, the only deny-by-default one",
+    "  2. permissions.allow  - WebFetch(domain:...), only decides prompting",
+    "  3. sandbox.network    - allowedDomains, applies to Bash",
+    "A host missing from any one of them is refused there, not silently allowed,",
+    "so drift shows up as an unexplained block. Add a host to all three."
+  ],
+  "allow": [
+    "localhost",
+    "127.0.0.1",
+    "::1",
+
+    "code.claude.com",
+    "docs.claude.com",
+    "docs.anthropic.com",
+    "claude.ai",
+
+    "docs.python.org",
+    "*.readthedocs.io",
+    "peps.python.org",
+
+    "pypi.org",
+    "files.pythonhosted.org",
+    "json.schemastore.org",
+
+    "github.com",
+    "raw.githubusercontent.com",
+    "objects.githubusercontent.com"
+  ]
+}
