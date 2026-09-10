@@ -31,7 +31,9 @@ jobs:
       # Mirrors `make check` (AGENTS.md section 3). Kept as explicit steps so a
       # failure names the tier that broke.
       - name: Tier 0 - syntax
-        run: python -m py_compile shared/hunt.py shared/streamlit.py
+        run: |
+          python -m py_compile shared/hunt.py shared/streamlit.py
+          python -c "import ast, pathlib; [ast.parse(p.read_text(), str(p)) for p in pathlib.Path('.claude/hooks').glob('*.py')]"
 
       - name: Tier 0 - compose config
         run: docker compose -f docker-compose.yml config -q

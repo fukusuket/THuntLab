@@ -1,6 +1,10 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
   "permissions": {
+    "disableBypassPermissionsMode": "disable",
     "allow": [
       "Bash(make check:*)",
       "Bash(make check-tier0:*)",
@@ -25,13 +29,34 @@
       "Bash(rg:*)",
       "Bash(head:*)",
       "Bash(wc:*)",
-      "Bash(sed -n:*)"
+      "Bash(sed -n:*)",
+      "WebFetch(domain:code.claude.com)",
+      "WebFetch(domain:docs.claude.com)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "WebFetch(domain:claude.ai)",
+      "WebFetch(domain:docs.python.org)",
+      "WebFetch(domain:peps.python.org)",
+      "WebFetch(domain:*.readthedocs.io)",
+      "WebFetch(domain:pypi.org)",
+      "WebFetch(domain:files.pythonhosted.org)",
+      "WebFetch(domain:json.schemastore.org)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:objects.githubusercontent.com)"
+    ],
+    "ask": [
+      "Bash(*shared/hunt.py*)",
+      "Bash(*python3 hunt.py*)",
+      "Bash(*python hunt.py*)",
+      "Bash(git add *)"
     ],
     "deny": [
-      "Read(./shared/authkey.txt)",
-      "Read(./**/.env)",
-      "Read(./**/.env.*)",
-      "Bash(cat ./shared/authkey.txt)",
+      "Read(authkey.txt)",
+      "Read(.env)",
+      "Read(.env.local)",
+      "Edit(authkey.txt)",
+      "Edit(.env)",
+      "Edit(.env.local)",
       "Bash(sudo:*)",
       "Bash(git commit:*)",
       "Bash(git push:*)",
@@ -44,9 +69,206 @@
       "Bash(nslookup:*)",
       "Bash(host:*)",
       "Bash(ping:*)",
+      "Bash(nc:*)",
+      "Bash(ncat:*)",
+      "Bash(netcat:*)",
+      "Bash(telnet:*)",
+      "Bash(ssh:*)",
+      "Bash(scp:*)",
+      "Bash(whois:*)",
+      "Bash(traceroute:*)",
+      "Bash(nmap:*)",
+      "Bash(http:*)",
+      "Bash(httpie:*)",
+      "Bash(openssl s_client:*)",
       "Bash(make clean:*)",
-      "Bash(docker compose down -v:*)",
-      "Bash(docker volume rm:*)"
+      "Bash(make dev:*)",
+      "Bash(make up:*)",
+      "Bash(make down:*)",
+      "Bash(make restart:*)",
+      "Bash(make build:*)",
+      "Bash(make jenkins-build:*)",
+      "Bash(make jenkins-up:*)",
+      "Bash(make jenkins-down:*)",
+      "Bash(make jenkins-shell:*)",
+      "Bash(make streamlit-build:*)",
+      "Bash(make streamlit-up:*)",
+      "Bash(make streamlit-down:*)",
+      "Bash(make streamlit-shell:*)",
+      "Bash(make jupyter-build:*)",
+      "Bash(make jupyter-up:*)",
+      "Bash(make jupyter-down:*)",
+      "Bash(make jupyter-shell:*)",
+      "Bash(docker compose up:*)",
+      "Bash(docker compose down:*)",
+      "Bash(docker compose restart:*)",
+      "Bash(docker compose build:*)",
+      "Bash(docker compose exec:*)",
+      "Bash(docker volume rm:*)",
+      "Bash(docker system prune:*)",
+      "Bash(*ioc_collect.py*)"
+    ]
+  },
+  "sandbox": {
+    "enabled": true,
+    "network": {
+      "allowedDomains": [
+        "localhost",
+        "127.0.0.1",
+        "::1",
+        "code.claude.com",
+        "docs.claude.com",
+        "docs.anthropic.com",
+        "claude.ai",
+        "docs.python.org",
+        "peps.python.org",
+        "*.readthedocs.io",
+        "pypi.org",
+        "files.pythonhosted.org",
+        "json.schemastore.org",
+        "github.com",
+        "raw.githubusercontent.com",
+        "objects.githubusercontent.com"
+      ]
+    },
+    "credentials": {
+      "files": [
+        {
+          "path": "./shared/authkey.txt",
+          "mode": "deny"
+        },
+        {
+          "path": "./shared/.env",
+          "mode": "deny"
+        },
+        {
+          "path": "./shared/threatfeed-collector/.env",
+          "mode": "deny"
+        }
+      ],
+      "envVars": [
+        {
+          "name": "OPENAI_API_KEY",
+          "mode": "deny"
+        },
+        {
+          "name": "MISP_KEY",
+          "mode": "deny"
+        },
+        {
+          "name": "SIEM_PASS",
+          "mode": "deny"
+        },
+        {
+          "name": "SIEM_PASSWORD",
+          "mode": "deny"
+        },
+        {
+          "name": "REDIS_PASSWORD",
+          "mode": "deny"
+        },
+        {
+          "name": "MYSQL_PASSWORD",
+          "mode": "deny"
+        },
+        {
+          "name": "MYSQL_ROOT_PASSWORD",
+          "mode": "deny"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "mode": "deny"
+        },
+        {
+          "name": "AWS_SESSION_TOKEN",
+          "mode": "deny"
+        }
+      ]
+    }
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/session-start.sh"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash|PowerShell|WebFetch|WebSearch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/guard-network.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/guard-secrets.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/require-check.sh",
+            "args": [
+              "mark-dirty"
+            ]
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/require-check.sh",
+            "args": [
+              "mark-checked"
+            ]
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/require-check.sh",
+            "args": [
+              "mark-checked"
+            ]
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PROJECT_DIR}/.claude/hooks/require-check.sh",
+            "args": [
+              "verify"
+            ]
+          }
+        ]
+      }
     ]
   }
 }
