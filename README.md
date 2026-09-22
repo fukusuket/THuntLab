@@ -31,16 +31,21 @@ The platform consists of four main services running in Docker containers:
    cd THuntLab
    ```
 
-2. **Build and start all services:**
+2. **Configure Docker Compose, then build and start all services:**
    ```bash
+   cp .env.example .env
    sudo make dev
    ```
+
+   The root `.env` configures Docker Compose. `shared/.env` separately configures
+   the hunting scripts. Jenkins points both jobs at `http://misp-nginx:8080`.
+   The lab uses `BASE_URL=http://localhost` by default.
 
 3. **Access the services:**
    - Jenkins: http://localhost:8080
    - Streamlit Dashboard: http://localhost:8081
    - Jupyter Notebook: http://localhost:8082
-   - MISP Platform: https://localhost
+   - MISP Platform: http://localhost
       - (email: admin@admin.test / password: admin)
 
 ## Available Commands
@@ -55,7 +60,12 @@ Use the included Makefile for easy service management:
 - `make logs` - Show logs for all services
 - `make status` - Check service status
 - `make clean` - Remove all services and volumes
-- `make dev` - Build and start all services
+- `make pull` - Pull the latest upstream images (MISP core and nginx, MariaDB, Valkey)
+- `make dev` - Pull, build and start all services
+
+> `make up` / `make build` reuse whatever image tag is already cached locally.
+> To pick up a newer MISP release, use `sudo make dev` (which pulls first) or
+> run `make pull` before starting.
 
 ## Shared Directory
 
@@ -103,7 +113,11 @@ Configure MISP to share threat intelligence data with your hunting scripts and d
 ## Troubleshooting
 
 - Check container logs: `make logs`
-- Verify port availability (8080, 8081, 8082, 80, 443)
+- Verify port availability (8080, 8081, 8082, 80)
+- Check `make status` for `misp-core` health and `misp-nginx` startup
+- Open `http://localhost/users/login` and confirm the MISP login page loads
+- Check `docker compose logs --tail=80 misp-core misp-nginx` if the page does not load
+- Confirm that the existing `shared/authkey.txt` works with a read-only MISP API request
 - Ensure Docker daemon is running
 
 ## Contributing

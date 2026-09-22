@@ -13,6 +13,7 @@ services:
     environment:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
       - JENKINS_OPTS=--httpPort=8080
+      - MISP_URL=http://misp-nginx:8080
     restart: unless-stopped
     networks:
       - app-network
@@ -101,20 +102,45 @@ services:
       db:
         condition: service_healthy
     healthcheck:
-      test: curl -ks ${BASE_URL:-https://localhost}/users/heartbeat > /dev/null || exit 1
+      test: bash -c 'echo > /dev/tcp/127.0.0.1/9002' || exit 1
       interval: 2s
       timeout: 1s
-      retries: 10
-      start_period: 30s
-      start_interval: 30s
+      retries: 3
+      start_period: 60s
+      start_interval: 5s
     restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
+    expose:
+      - "9002"
     networks:
       - app-network
     environment:
+      - "BASE_URL=${BASE_URL:-http://localhost}"
       - "ENABLE_THEMES=true"
+
+  misp-nginx:
+    image: ghcr.io/misp/misp-docker/misp-nginx:${CORE_RUNNING_TAG:-latest}
+    depends_on:
+      misp-core:
+        condition: service_healthy
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${NGINX_HTTP_PORT:-80}:8080"
+    tmpfs:
+      - /etc/nginx/conf.d:mode=0755,uid=101,gid=101
+      - /var/cache/nginx:mode=0755,uid=101,gid=101
+      - /tmp:mode=1777
+    user: nginx
+    read_only: true
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    environment:
+      - "BASE_URL=${BASE_URL:-http://localhost}"
+      - "FASTCGI_LISTEN=misp-core:9002"
+      - "FASTCGI_LISTEN_STATUS=misp-core:9003"
+    networks:
+      - app-network
 
 volumes:
   jenkins_home:

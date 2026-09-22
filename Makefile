@@ -11,7 +11,8 @@ help:
 	@echo "  logs       - Show logs for all services"
 	@echo "  status     - Check status of all services"
 	@echo "  clean      - Remove all services and volumes"
-	@echo "  dev        - Build and start all services"
+	@echo "  pull       - Pull the latest upstream images (misp-core, misp-nginx, db, redis)"
+	@echo "  dev        - Pull, build and start all services"
 	@echo ""
 	@echo "Verification (see AGENTS.md section 3):"
 	@echo "  check            - Tier 0 + Tier 1. Offline, no services. THE gate."
@@ -65,9 +66,19 @@ status:
 clean:
 	docker compose -f $(COMPOSE_FILE) down -v --remove-orphans
 
-# Development: build and start all
+# Pull the images we do not build ourselves (misp-core, misp-nginx, db, redis).
+# `up --build` only rebuilds services that have a `build:` stanza; for
+# `image:`-only services Compose's default pull policy is "missing", so a
+# cached MISP images would otherwise be reused, even when the
+# `latest` tag moves. Pull core and nginx together to keep their versions aligned.
+# --ignore-buildable skips jenkins/streamlit/jupyter, which have no registry image.
+.PHONY: pull
+pull:
+	docker compose -f $(COMPOSE_FILE) pull --ignore-buildable
+
+# Development: pull, build and start all
 .PHONY: dev
-dev:
+dev: pull
 	docker compose -f $(COMPOSE_FILE) up -d --build --wait
 	sleep 30
 	docker compose exec -T db sh -lc 'mysql -u misp -pexample -h 127.0.0.1 misp -N -s -e "select authkey from users where email = \"admin@admin.test\";" > /tmp/authkey.txt'

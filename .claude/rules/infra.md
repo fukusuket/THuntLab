@@ -69,9 +69,9 @@ and `make clean` are denied for agents in `.claude/settings.json`. Do not route
 around the wall — hand the user this block:
 
 ```bash
-sudo make dev            # build + up --wait; extracts the MISP authkey to ./shared/authkey.txt
+sudo make dev            # pull + build + up --wait; extracts the MISP authkey to ./shared/authkey.txt
 make status
-curl -ks https://localhost/users/heartbeat        # MISP
+curl -sf http://localhost/users/login >/dev/null   # MISP login page via nginx
 curl -sf http://localhost:8081 >/dev/null         # Streamlit
 curl -sf http://localhost:8082 >/dev/null         # Jupyter
 ```
@@ -79,6 +79,13 @@ curl -sf http://localhost:8082 >/dev/null         # Jupyter
 `sudo make dev` sleeps 30s then reads the admin authkey out of the `db`
 container. If it fails, MISP was still booting — re-run it rather than "fixing"
 the Makefile.
+
+`make dev` depends on `make pull`, which upgrades `misp-core` and `misp-nginx`:
+`up --build` rebuilds only the services with a `build:` stanza, and Compose's
+default pull policy for an `image:`-only service is "missing", so a cached
+`misp-core:latest` would otherwise never be refreshed — not even by
+`make clean`, which removes containers and volumes but no images. `make pull`
+reaches ghcr.io, so it is Tier 2 as well: hand it to the user.
 
 `make clean` destroys the MISP database and all Jenkins job history. **Confirm
 with the user every time** — prior approval does not carry over.
